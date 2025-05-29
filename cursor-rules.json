@@ -1,0 +1,153 @@
+{
+  "rules": [
+    {
+      "name": "Format on Save",
+      "pattern": "**/*",
+      "autoformat": true
+    },
+    {
+      "name": "TypeScript Rules",
+      "pattern": "**/*.{ts,tsx}",
+      "lint": {
+        "rules": {
+          "no-unused-vars": "warn",
+          "no-console": "warn",
+          "prefer-const": "error"
+        }
+      }
+    },
+    {
+      "name": "React Component Rules",
+      "pattern": "**/components/**/*.{tsx,jsx}",
+      "lint": {
+        "rules": {
+          "react-hooks/rules-of-hooks": "error",
+          "react-hooks/exhaustive-deps": "warn"
+        }
+      }
+    },
+    {
+      "name": "Test Files",
+      "pattern": "**/*.test.{ts,tsx,js,jsx}",
+      "lint": {
+        "rules": {
+          "jest/valid-expect": "error",
+          "jest/no-disabled-tests": "warn"
+        }
+      }
+    },
+    {
+      "name": "CSS/SCSS Rules",
+      "pattern": "**/*.{css,scss}",
+      "lint": {
+        "rules": {
+          "color-no-invalid-hex": true,
+          "declaration-block-no-duplicate-properties": true
+        }
+      }
+    },
+    {
+      "name": "Markdown Rules",
+      "pattern": "**/*.md",
+      "lint": {
+        "rules": {
+          "no-trailing-spaces": true,
+          "no-multiple-empty-lines": true
+        }
+      }
+    },
+    {
+      "name": "UI Component Rules",
+      "pattern": "**/components/**/*.{tsx,jsx}",
+      "lint": {
+        "rules": {
+          "react-hooks/rules-of-hooks": "error",
+          "react-hooks/exhaustive-deps": "warn",
+          "react/prop-types": "error",
+          "react/jsx-no-duplicate-props": "error",
+          "react/jsx-key": "error",
+          "react/jsx-handler-names": "warn",
+          "react/jsx-pascal-case": "error",
+          "react/no-unused-prop-types": "warn",
+          "react/jsx-max-props-per-line": ["warn", { "maximum": 3 }],
+          "react/jsx-sort-props": "warn",
+          "react/jsx-curly-brace-presence": ["error", { "props": "never", "children": "never" }],
+          "react/self-closing-comp": "error"
+        }
+      },
+      "formatting": {
+        "maxLineLength": 100,
+        "componentStructure": [
+          "imports",
+          "types",
+          "constants",
+          "component",
+          "styles",
+          "exports"
+        ]
+      }
+    },
+    {
+      "name": "UI Styles Rules",
+      "pattern": "**/styles/**/*.{css,scss,styled.{ts,js}}",
+      "lint": {
+        "rules": {
+          "color-no-invalid-hex": true,
+          "declaration-block-no-duplicate-properties": true,
+          "selector-class-pattern": "^[a-z][a-zA-Z0-9]*$",
+          "declaration-property-value-disallowed-list": {
+            "position": ["fixed"],
+            "z-index": ["/^[0-9]{3,}$/"]
+          },
+          "unit-disallowed-list": ["px"],
+          "selector-max-specificity": "0,3,2",
+          "max-nesting-depth": 3
+        }
+      }
+    },
+    {
+      "name": "UI Assets Rules",
+      "pattern": "**/assets/**/*.{svg,png,jpg,jpeg}",
+      "lint": {
+        "rules": {
+          "max-file-size": "100kb",
+          "naming-convention": "kebab-case"
+        }
+      }
+    }
+  ],
+  "editor": {
+    "tabSize": 2,
+    "insertSpaces": true,
+    "wordWrap": "on",
+    "rulers": [80, 100],
+    "formatOnSave": true,
+    "formatOnPaste": true,
+    "trimTrailingWhitespace": true,
+    "trimFinalNewlines": true,
+    "bracketPairColorization": true,
+    "snippets": {
+      "component": {
+        "prefix": "rfc",
+        "body": [
+          "interface ${1:ComponentName}Props {",
+          "  ${2:prop}: ${3:type};",
+          "}",
+          "",
+          "export const ${1:ComponentName} = ({ ${2:prop} }: ${1:ComponentName}Props) => {",
+          "  return (",
+          "    <div>",
+          "      $0",
+          "    </div>",
+          "  );",
+          "};"
+        ]
+      }
+    }
+  },
+  "terminal": {
+    "fontSize": 14,
+    "lineHeight": 1.2,
+    "fontFamily": "Consolas, 'Courier New', monospace"
+  }
+} 

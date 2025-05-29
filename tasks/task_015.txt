@@ -1,0 +1,73 @@
+# Task ID: 15
+# Title: Implement Analytics Integration
+# Status: pending
+# Dependencies: 6, 7, 8, 9, 10, 11, 12
+# Priority: medium
+# Description: Integrate Google Analytics 4 for user behavior tracking, event tracking for CTA interactions, and conversion goal setup.
+# Details:
+1. Set up Google Analytics 4 property
+2. Implement GA4 tracking code using `next-ga` or similar library:
+```javascript
+// Example implementation in _app.js
+import { useEffect } from 'react'
+import { useRouter } from 'next/router'
+import Script from 'next/script'
+
+export default function App({ Component, pageProps }) {
+  const router = useRouter()
+  
+  useEffect(() => {
+    const handleRouteChange = (url) => {
+      window.gtag('config', 'G-XXXXXXXXXX', {
+        page_path: url,
+      })
+    }
+    router.events.on('routeChangeComplete', handleRouteChange)
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteChange)
+    }
+  }, [router.events])
+
+  return (
+    <>
+      <Script
+        strategy="afterInteractive"
+        src={`https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX`}
+      />
+      <Script
+        id="gtag-init"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-XXXXXXXXXX');
+          `,
+        }}
+      />
+      <Component {...pageProps} />
+    </>
+  )
+}
+```
+3. Configure event tracking for CTA interactions:
+   - Phone calls
+   - WhatsApp clicks
+   - SMS clicks
+   - Form submissions
+   - Navigation between verticals
+4. Set up conversion goals for key actions
+5. Implement custom dimensions for language preference
+6. Configure user journey tracking
+7. Set up enhanced measurement for file downloads, outbound links
+8. Implement consent management for GDPR compliance
+
+# Test Strategy:
+1. Verify GA4 is correctly tracking page views
+2. Test event tracking for all CTA interactions
+3. Validate conversion goals are properly recorded
+4. Test user journey tracking across pages
+5. Verify language preference tracking
+6. Test consent management functionality
+7. Validate data collection in GA4 dashboard
