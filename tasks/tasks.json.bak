@@ -89,7 +89,64 @@
         1
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Configure Tailwind CSS with Custom Color Palette",
+          "description": "Set up Tailwind CSS configuration with the specified custom color palette using CSS variables",
+          "dependencies": [],
+          "details": "Create or modify the Tailwind CSS configuration to include the custom color palette (Ocean blue, Electric green, Sunset orange, Charcoal gray, Light gray) using CSS variables in the theme section. Follow the Tailwind v4 approach of using native CSS variables for colors.",
+          "status": "pending",
+          "testStrategy": "Verify that all custom colors are accessible throughout the application by testing their application in various components"
+        },
+        {
+          "id": 2,
+          "title": "Implement Typography Configuration with Inter Font",
+          "description": "Configure typography using Inter font family with specified font weights",
+          "dependencies": [
+            1
+          ],
+          "details": "Import Inter font from Google Fonts or use next/font. Set up the font weights (400, 500, 600-700) in the Tailwind configuration. Create typography utility classes for consistent text styling across the application.",
+          "status": "pending",
+          "testStrategy": "Test font rendering across different browsers and devices to ensure consistency"
+        },
+        {
+          "id": 3,
+          "title": "Develop Base Layout Components",
+          "description": "Create foundational layout components including header, footer, and main content container",
+          "dependencies": [
+            1,
+            2
+          ],
+          "details": "Build a responsive header with logo, navigation, and language selector. Implement a footer with contact information, social links, and copyright. Create a main content container with responsive padding that adapts to different screen sizes.",
+          "status": "pending",
+          "testStrategy": "Test layout components across all responsive breakpoints to ensure proper rendering and functionality"
+        },
+        {
+          "id": 4,
+          "title": "Configure Responsive Breakpoints",
+          "description": "Implement responsive design breakpoints for mobile, tablet, and desktop views",
+          "dependencies": [
+            1
+          ],
+          "details": "Set up responsive breakpoints in Tailwind configuration for Mobile (320px-768px), Tablet (769px-1024px), and Desktop (1025px+). Create utility classes for responsive layouts and implement media query strategies for component adaptability.",
+          "status": "pending",
+          "testStrategy": "Test the application at various screen widths to verify proper responsive behavior at each breakpoint"
+        },
+        {
+          "id": 5,
+          "title": "Create UI Component Library with Accessibility Features",
+          "description": "Develop reusable UI components with proper accessibility implementation",
+          "dependencies": [
+            1,
+            2,
+            4
+          ],
+          "details": "Build button variants (primary, secondary, CTA) using the custom color palette. Create card components for products and services. Implement navigation components for both desktop and mobile views. Ensure all components include proper ARIA attributes and support keyboard navigation for accessibility compliance.",
+          "status": "pending",
+          "testStrategy": "Conduct accessibility testing using screen readers and keyboard navigation to verify WCAG compliance"
+        }
+      ]
     },
     {
       "id": 3,
@@ -103,7 +160,61 @@
         2
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Configure Next.js i18n Settings",
+          "description": "Set up the i18n configuration in next.config.js to define supported locales, default locale, and enable internationalized routing.",
+          "dependencies": [],
+          "details": "Edit next.config.js to include the i18n object with an array of supported locales and a defaultLocale. Ensure routing is enabled for these locales.",
+          "status": "pending"
+        },
+        {
+          "id": 2,
+          "title": "Establish Translation File Structure",
+          "description": "Create a directory structure for translation files, with separate JSON files for each supported language containing key-value pairs for translatable strings.",
+          "dependencies": [
+            1
+          ],
+          "details": "Create a 'locales' directory at the project root. Inside, add files like en.json, fr.json, etc., each containing the necessary translations.",
+          "status": "pending"
+        },
+        {
+          "id": 3,
+          "title": "Implement Language Switcher Component",
+          "description": "Develop a UI component that allows users to switch between available languages, updating the locale and reloading content accordingly.",
+          "dependencies": [
+            1,
+            2
+          ],
+          "details": "Build a React component that lists available locales and updates the application's locale when a user selects a different language.",
+          "status": "pending"
+        },
+        {
+          "id": 4,
+          "title": "Set Up Language Detection Logic",
+          "description": "Implement logic to detect the user's preferred language (e.g., from browser settings or cookies) and automatically set the locale on initial visit.",
+          "dependencies": [
+            1,
+            2
+          ],
+          "details": "Use middleware or client-side logic to read the user's language preference and redirect or set the locale accordingly.",
+          "status": "pending"
+        },
+        {
+          "id": 5,
+          "title": "Configure SEO-Friendly URL Structure",
+          "description": "Ensure that URLs reflect the selected language (e.g., /en/about, /fr/about) and that proper hreflang tags are set for SEO optimization.",
+          "dependencies": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "details": "Update routing and metadata to include locale prefixes in URLs and add hreflang tags to pages for search engine optimization.",
+          "status": "pending"
+        }
+      ]
     },
     {
       "id": 4,
@@ -163,7 +274,57 @@
         5
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Design Responsive Page Layout",
+          "description": "Create a responsive layout that works across all devices (desktops, laptops, tablets, and phones) with intuitive navigation for the e-bike sales page.",
+          "dependencies": [],
+          "details": "Implement a clean, user-friendly design that highlights premium e-bikes. Include a prominent header with brand storytelling elements, navigation menu, and call-to-action buttons. Ensure the layout supports high-quality imagery and maintains optimal loading speed across all devices.",
+          "status": "pending"
+        },
+        {
+          "id": 2,
+          "title": "Develop Product Catalog with Specifications",
+          "description": "Build a comprehensive product catalog system that displays detailed e-bike specifications, pricing, and comparison features.",
+          "dependencies": [
+            1
+          ],
+          "details": "Create filterable product listings with detailed technical specifications for each e-bike model. Include battery capacity, motor power, range, charging time, weight, and frame materials. Implement a comparison feature allowing customers to evaluate multiple models side-by-side. Integrate pricing information with any available promotions or financing options.",
+          "status": "pending"
+        },
+        {
+          "id": 3,
+          "title": "Create Bafang Motor Section",
+          "description": "Develop a dedicated section highlighting Bafang motor technology, benefits, and specifications for the e-bikes.",
+          "dependencies": [
+            1
+          ],
+          "details": "Design an informative section explaining Bafang motor technology with technical specifications, performance metrics, and reliability data. Include interactive elements such as cutaway diagrams or 3D models to demonstrate motor functionality. Add customer testimonials specific to motor performance and educational content about motor maintenance and longevity.",
+          "status": "pending"
+        },
+        {
+          "id": 4,
+          "title": "Implement Image Gallery with Lightbox",
+          "description": "Create an interactive image gallery with lightbox functionality for detailed product viewing.",
+          "dependencies": [
+            1,
+            2
+          ],
+          "details": "Develop a high-performance image gallery featuring multiple angles of each e-bike model. Implement lightbox functionality for enlarged viewing with zoom capabilities. Ensure images are optimized for fast loading while maintaining high quality. Include 360-degree view options where available and consider adding short video clips demonstrating e-bikes in action.",
+          "status": "pending"
+        },
+        {
+          "id": 5,
+          "title": "Develop FAQ Section",
+          "description": "Create a comprehensive FAQ section addressing common customer questions about e-bikes, purchasing, shipping, and maintenance.",
+          "dependencies": [
+            1
+          ],
+          "details": "Design an expandable/collapsible FAQ section organized by topics (product specifications, ordering process, shipping, warranty, maintenance, etc.). Implement search functionality within the FAQ section. Include links to relevant product pages where appropriate and add a contact form for questions not covered in the FAQs. Consider adding a live chat option for immediate customer support.",
+          "status": "pending"
+        }
+      ]
     },
     {
       "id": 8,
@@ -179,7 +340,59 @@
         5
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Design Page Layout and Structure",
+          "description": "Create a visually hierarchical layout that guides visitors through the conversion services information in a logical flow",
+          "dependencies": [],
+          "details": "Implement a strong visual hierarchy following the AIDA framework (Awareness, Interest, Desire, Action). Use contrasting colors for CTAs to make them stand out from the background. Ensure the most important information appears prominently while maintaining a clean, user-friendly design that enhances the overall user experience.",
+          "status": "pending"
+        },
+        {
+          "id": 2,
+          "title": "Develop Before/After Gallery with Comparison Sliders",
+          "description": "Build an interactive gallery showcasing conversion results with sliding comparison functionality",
+          "dependencies": [
+            1
+          ],
+          "details": "Create an interactive component that allows users to compare before and after results using a slider mechanism. Ensure images are high-quality and properly optimized for web. Include brief descriptions of the conversion work performed. Make the gallery responsive across all device types and implement smooth animations for the slider interactions.",
+          "status": "pending"
+        },
+        {
+          "id": 3,
+          "title": "Create Conversion Process Section",
+          "description": "Develop a step-by-step explanation of the conversion process with visual aids",
+          "dependencies": [
+            1
+          ],
+          "details": "Design a clear, sequential presentation of the conversion process with numbered steps, icons, or timeline visualization. Include detailed descriptions for each stage of the process. Add testimonials or success metrics at relevant points to build credibility. Ensure the section answers common questions about timeframes and what customers can expect.",
+          "status": "pending"
+        },
+        {
+          "id": 4,
+          "title": "Implement Warranty Information Section",
+          "description": "Design a comprehensive warranty information area with clear terms and conditions",
+          "dependencies": [
+            1
+          ],
+          "details": "Create a dedicated section that clearly outlines warranty coverage, duration, limitations, and claim process. Use simple language to explain complex terms. Include an FAQ subsection addressing common warranty questions. Add trust indicators such as certification badges or guarantees. Ensure all legal information is accurate and accessible.",
+          "status": "pending"
+        },
+        {
+          "id": 5,
+          "title": "Develop Pricing Guidelines and CTAs",
+          "description": "Create transparent pricing information with strategic calls-to-action throughout the page",
+          "dependencies": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "details": "Design a pricing section that clearly communicates value rather than just costs. Include multiple CTAs throughout the page in contrasting colors to stand out. Implement a lead capture form for quote requests. Consider adding urgency elements like limited-time offers where appropriate. Ensure pricing information is easy to understand with no hidden costs.",
+          "status": "pending"
+        }
+      ]
     },
     {
       "id": 9,
@@ -211,7 +424,48 @@
         5
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Implement Tour Packages Section",
+          "description": "Create a structured display of tour packages with clear categorization and essential information",
+          "dependencies": [],
+          "details": "Design a section that showcases different tour packages with clear pricing, duration (3-5 steps per tour is ideal), and target audience. Include progress indicators for each tour to show users what to expect. Use action-oriented language and avoid technical jargon in the descriptions.",
+          "status": "pending"
+        },
+        {
+          "id": 2,
+          "title": "Develop Interactive Route Maps Integration",
+          "description": "Implement geographic visualization of tour routes with interactive elements",
+          "dependencies": [
+            1
+          ],
+          "details": "Integrate map functionality that clearly displays tour routes with interactive elements. Include markers for key stops, estimated travel times between locations, and the ability to zoom in/out. Ensure the map is responsive and works across different devices. Consider adding tooltips for important landmarks.",
+          "status": "pending"
+        },
+        {
+          "id": 3,
+          "title": "Create Guide Information Section",
+          "description": "Design profiles and information displays for tour guides",
+          "dependencies": [
+            1
+          ],
+          "details": "Develop a section that presents information about tour guides including their expertise, experience, languages spoken, and specialties. Include professional photos and brief bios. Consider adding a feature that allows users to match with guides based on their interests or tour preferences.",
+          "status": "pending"
+        },
+        {
+          "id": 4,
+          "title": "Build Booking Information with Photo Gallery",
+          "description": "Implement booking functionality with visual representation of tour experiences",
+          "dependencies": [
+            1,
+            2,
+            3
+          ],
+          "details": "Create a comprehensive booking section with clear calls-to-action, availability calendar, pricing details, and a photo gallery showcasing tour highlights. Include tooltips or helpful microcopy to guide users through the booking process. Ensure the gallery has high-quality images with descriptive captions to give users a preview of the experience.",
+          "status": "pending"
+        }
+      ]
     },
     {
       "id": 11,
@@ -277,7 +531,57 @@
         13
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Implement Meta Tags Optimization",
+          "description": "Create and optimize meta tags across all website pages including title tags, meta descriptions, and header tags",
+          "dependencies": [],
+          "details": "Craft compelling meta descriptions that include target keywords. Ensure title tags are under 60 characters and meta descriptions under 160 characters. Include primary keywords in H1 tags and use H2-H6 tags hierarchically throughout content. Customize URLs to include relevant keywords.",
+          "status": "pending"
+        },
+        {
+          "id": 2,
+          "title": "Implement Structured Data Markup",
+          "description": "Add schema.org markup to enhance search result appearance with rich snippets",
+          "dependencies": [
+            1
+          ],
+          "details": "Implement JSON-LD structured data for organization information, products, articles, FAQs, reviews, and events as applicable. Test implementation using Google's Structured Data Testing Tool and fix any errors. Ensure structured data aligns with actual page content.",
+          "status": "pending"
+        },
+        {
+          "id": 3,
+          "title": "Generate and Submit Sitemap and Configure Robots.txt",
+          "description": "Create XML sitemap and optimize robots.txt file for proper search engine crawling",
+          "dependencies": [
+            1
+          ],
+          "details": "Generate comprehensive XML sitemap including all important pages. Submit sitemap to Google Search Console and Bing Webmaster Tools. Configure robots.txt to block unnecessary crawling of duplicate or low-value pages while ensuring important content remains accessible.",
+          "status": "pending"
+        },
+        {
+          "id": 4,
+          "title": "Implement Hreflang Tags for Multilingual SEO",
+          "description": "Add hreflang attributes to indicate language alternatives for international audiences",
+          "dependencies": [
+            1,
+            3
+          ],
+          "details": "Identify all language/region variants of content. Implement proper hreflang tags in the head section of each page or via sitemap. Ensure reciprocal hreflang references between all language versions. Test implementation using international targeting tools in Google Search Console.",
+          "status": "pending"
+        },
+        {
+          "id": 5,
+          "title": "Optimize for Local SEO",
+          "description": "Implement local SEO optimizations to improve visibility in location-based searches",
+          "dependencies": [
+            2
+          ],
+          "details": "Create and verify Google Business Profile. Implement local business schema markup with accurate NAP (Name, Address, Phone) information. Optimize for local keywords in content and meta tags. Ensure consistent business information across all online directories and citation sources.",
+          "status": "pending"
+        }
+      ]
     },
     {
       "id": 15,
@@ -316,7 +620,56 @@
         13
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Image Optimization",
+          "description": "Analyze and optimize all images by compressing, resizing, and converting to efficient formats (e.g., JPEG, PNG, WebP). Implement lazy loading for non-critical images to reduce initial load times.",
+          "dependencies": [],
+          "details": "Ensure images are not resized via CSS but are served at the correct dimensions. Use compression tools and consider next-gen formats for further optimization. Implement lazy loading to defer offscreen images.",
+          "status": "pending"
+        },
+        {
+          "id": 2,
+          "title": "Font Loading Optimization",
+          "description": "Optimize font loading by minimizing the number of font files, using efficient formats, and implementing font-display strategies to avoid render-blocking.",
+          "dependencies": [],
+          "details": "Subset fonts to include only used glyphs, use modern formats like WOFF2, and apply font-display: swap or similar CSS to improve perceived performance.",
+          "status": "pending"
+        },
+        {
+          "id": 3,
+          "title": "Code Splitting and Dynamic Imports",
+          "description": "Implement code splitting and dynamic imports to load only the necessary JavaScript for each page or feature, reducing initial bundle size and improving load times.",
+          "dependencies": [],
+          "details": "Use build tools or frameworks that support code splitting (e.g., Webpack, React.lazy) to break code into smaller chunks loaded on demand.",
+          "status": "pending"
+        },
+        {
+          "id": 4,
+          "title": "Caching Strategy",
+          "description": "Develop and implement a caching strategy for static and dynamic assets to reduce server load and improve repeat visit performance.",
+          "dependencies": [],
+          "details": "Leverage browser caching, set appropriate cache-control headers, and consider service workers for advanced caching of dynamic content.",
+          "status": "pending"
+        },
+        {
+          "id": 5,
+          "title": "CSS and JavaScript Minification",
+          "description": "Minify CSS and JavaScript files to remove unnecessary characters, whitespace, and comments, reducing file sizes and improving load times.",
+          "dependencies": [],
+          "details": "Use automated build tools to minify assets and bundle files where appropriate. Ensure minification does not break functionality.",
+          "status": "pending"
+        },
+        {
+          "id": 6,
+          "title": "CDN Integration",
+          "description": "Integrate a Content Delivery Network (CDN) to distribute static assets across geographically distributed servers, reducing latency and improving asset delivery speed.",
+          "dependencies": [],
+          "details": "Configure CDN for all static assets (images, CSS, JS, fonts) and ensure cache invalidation strategies are in place for updates.",
+          "status": "pending"
+        }
+      ]
     },
     {
       "id": 17,
@@ -336,7 +689,53 @@
         13
       ],
       "status": "pending",
-      "subtasks": []
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Implement Image Alt Text and Descriptions",
+          "description": "Add meaningful alt text to all images and provide extended descriptions where necessary to ensure non-text content is accessible to screen readers.",
+          "dependencies": [],
+          "details": "Review all images across the site, ensuring each has descriptive alt attributes. For complex images (charts, infographics), provide detailed descriptions either inline or via linked content.",
+          "status": "pending"
+        },
+        {
+          "id": 2,
+          "title": "Verify and Enhance Color Contrast",
+          "description": "Check all text and interactive elements for sufficient color contrast according to WCAG AA standards and adjust styles as needed.",
+          "dependencies": [],
+          "details": "Audit color contrast ratios using automated tools and manual checks. Update CSS to ensure a minimum contrast ratio of 4.5:1 for normal text and 3:1 for large text.",
+          "status": "pending"
+        },
+        {
+          "id": 3,
+          "title": "Implement Keyboard Navigation",
+          "description": "Ensure all interactive elements and navigation can be accessed and operated using only a keyboard.",
+          "dependencies": [],
+          "details": "Test tab order, focus indicators, and keyboard shortcuts. Fix any elements that are not reachable or operable via keyboard, and ensure logical navigation flow.",
+          "status": "pending"
+        },
+        {
+          "id": 4,
+          "title": "Add ARIA Attributes Where Necessary",
+          "description": "Apply appropriate ARIA (Accessible Rich Internet Applications) attributes to enhance accessibility for dynamic content and complex UI components.",
+          "dependencies": [
+            1,
+            3
+          ],
+          "details": "Identify components that require ARIA roles, states, or properties (e.g., modals, accordions, live regions). Add and test ARIA attributes to improve screen reader support without duplicating native semantics.",
+          "status": "pending"
+        },
+        {
+          "id": 5,
+          "title": "Enhance Form Accessibility",
+          "description": "Improve the accessibility of all forms by ensuring proper labeling, error handling, and keyboard operability.",
+          "dependencies": [
+            3
+          ],
+          "details": "Label all form fields, associate errors with inputs, provide clear instructions, and ensure forms are fully usable with assistive technologies and keyboard navigation.",
+          "status": "pending"
+        }
+      ]
     },
     {
       "id": 18,

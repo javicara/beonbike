@@ -35,3 +35,35 @@
 5. Validate form accessibility
 6. Test with users who rely on assistive technologies if possible
 7. Verify heading structure is logical
+
+# Subtasks:
+## 1. Implement Image Alt Text and Descriptions [pending]
+### Dependencies: None
+### Description: Add meaningful alt text to all images and provide extended descriptions where necessary to ensure non-text content is accessible to screen readers.
+### Details:
+Review all images across the site, ensuring each has descriptive alt attributes. For complex images (charts, infographics), provide detailed descriptions either inline or via linked content.
+
+## 2. Verify and Enhance Color Contrast [pending]
+### Dependencies: None
+### Description: Check all text and interactive elements for sufficient color contrast according to WCAG AA standards and adjust styles as needed.
+### Details:
+Audit color contrast ratios using automated tools and manual checks. Update CSS to ensure a minimum contrast ratio of 4.5:1 for normal text and 3:1 for large text.
+
+## 3. Implement Keyboard Navigation [pending]
+### Dependencies: None
+### Description: Ensure all interactive elements and navigation can be accessed and operated using only a keyboard.
+### Details:
+Test tab order, focus indicators, and keyboard shortcuts. Fix any elements that are not reachable or operable via keyboard, and ensure logical navigation flow.
+
+## 4. Add ARIA Attributes Where Necessary [pending]
+### Dependencies: 17.1, 17.3
+### Description: Apply appropriate ARIA (Accessible Rich Internet Applications) attributes to enhance accessibility for dynamic content and complex UI components.
+### Details:
+Identify components that require ARIA roles, states, or properties (e.g., modals, accordions, live regions). Add and test ARIA attributes to improve screen reader support without duplicating native semantics.
+
+## 5. Enhance Form Accessibility [pending]
+### Dependencies: 17.3
+### Description: Improve the accessibility of all forms by ensuring proper labeling, error handling, and keyboard operability.
+### Details:
+Label all form fields, associate errors with inputs, provide clear instructions, and ensure forms are fully usable with assistive technologies and keyboard navigation.
+

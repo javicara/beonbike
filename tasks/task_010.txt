@@ -32,3 +32,29 @@
 5. Verify content is properly translated
 6. Test loading performance with Lighthouse
 7. Validate accessibility of all interactive elements
+
+# Subtasks:
+## 1. Implement Tour Packages Section [pending]
+### Dependencies: None
+### Description: Create a structured display of tour packages with clear categorization and essential information
+### Details:
+Design a section that showcases different tour packages with clear pricing, duration (3-5 steps per tour is ideal), and target audience. Include progress indicators for each tour to show users what to expect. Use action-oriented language and avoid technical jargon in the descriptions.
+
+## 2. Develop Interactive Route Maps Integration [pending]
+### Dependencies: 10.1
+### Description: Implement geographic visualization of tour routes with interactive elements
+### Details:
+Integrate map functionality that clearly displays tour routes with interactive elements. Include markers for key stops, estimated travel times between locations, and the ability to zoom in/out. Ensure the map is responsive and works across different devices. Consider adding tooltips for important landmarks.
+
+## 3. Create Guide Information Section [pending]
+### Dependencies: 10.1
+### Description: Design profiles and information displays for tour guides
+### Details:
+Develop a section that presents information about tour guides including their expertise, experience, languages spoken, and specialties. Include professional photos and brief bios. Consider adding a feature that allows users to match with guides based on their interests or tour preferences.
+
+## 4. Build Booking Information with Photo Gallery [pending]
+### Dependencies: 10.1, 10.2, 10.3
+### Description: Implement booking functionality with visual representation of tour experiences
+### Details:
+Create a comprehensive booking section with clear calls-to-action, availability calendar, pricing details, and a photo gallery showcasing tour highlights. Include tooltips or helpful microcopy to guide users through the booking process. Ensure the gallery has high-quality images with descriptive captions to give users a preview of the experience.
+
