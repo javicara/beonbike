@@ -1,6 +1,7 @@
 import { Inter } from 'next/font/google';
 import '@/styles/globals.css';
 import type { Metadata } from 'next';
+import { ResponsiveIndicator } from '@/components/ui/ResponsiveIndicator';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -24,6 +25,7 @@ export default function RootLayout({
         <main className="min-h-screen flex flex-col">
           {children}
         </main>
+        <ResponsiveIndicator />
       </body>
     </html>
   );
