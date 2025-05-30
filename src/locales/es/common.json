@@ -21,8 +21,30 @@
   },
   "footer": {
     "address": "Sunshine Coast, Queensland, Australia",
+    "contact": "Contáctanos",
     "rights": "Todos los derechos reservados",
     "privacy": "Política de Privacidad",
-    "terms": "Términos de Servicio"
+    "terms": "Términos de Servicio",
+    "followUs": "Síguenos",
+    "newsletter": "Suscríbete a nuestro boletín",
+    "subscribeButton": "Suscribir",
+    "emailPlaceholder": "Tu correo electrónico"
+  },
+  "company": {
+    "name": "Beonbike.pro",
+    "slogan": "Tu solución de movilidad eléctrica en Sunshine Coast, Australia."
+  },
+  "services": {
+    "title": "Servicios",
+    "ebikes": "Bicicletas Eléctricas",
+    "conversions": "Conversiones",
+    "rentals": "Alquiler",
+    "tours": "Tours"
+  },
+  "legal": {
+    "legal": "Legal",
+    "privacy": "Política de Privacidad",
+    "terms": "Términos de Servicio",
+    "whatsapp": "WhatsApp"
   }
 } 

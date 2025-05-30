@@ -241,7 +241,7 @@
         2,
         3
       ],
-      "status": "pending",
+      "status": "done",
       "subtasks": []
     },
     {
@@ -257,8 +257,62 @@
         4,
         5
       ],
-      "status": "pending",
-      "subtasks": []
+      "status": "done",
+      "subtasks": [
+        {
+          "id": 1,
+          "title": "Implement Hero Section",
+          "description": "Create the main hero section with headline, subheading, and primary call-to-action",
+          "dependencies": [],
+          "details": "Design and implement the hero section with a compelling headline, brief subheading text, primary CTA button, and background image. Ensure the hero is responsive across all device sizes and implement image optimization techniques for the background.",
+          "status": "done"
+        },
+        {
+          "id": 2,
+          "title": "Develop Business Verticals Grid",
+          "description": "Create a grid layout showcasing different business verticals with icons/images",
+          "dependencies": [
+            1
+          ],
+          "details": "Implement a responsive grid layout that displays each business vertical with an associated icon or image, title, and brief description. Include hover effects and ensure proper spacing between grid items. Optimize all images for web performance.",
+          "status": "done"
+        },
+        {
+          "id": 3,
+          "title": "Build About Us Preview Section",
+          "description": "Create a condensed version of the About Us section for the homepage",
+          "dependencies": [
+            1
+          ],
+          "details": "Design and implement a preview of the About Us section with a compelling image, brief company description, and a 'Learn More' button linking to the full About Us page. Ensure the section has proper padding and responsive behavior.",
+          "status": "done"
+        },
+        {
+          "id": 4,
+          "title": "Implement Contact CTAs",
+          "description": "Add call-to-action elements for contacting the business",
+          "dependencies": [
+            1,
+            2,
+            3
+          ],
+          "details": "Create prominent contact call-to-action elements including a contact form preview, phone number, email, and social media links. Style these elements to stand out and encourage user engagement. Ensure all links are properly set up.",
+          "status": "done"
+        },
+        {
+          "id": 5,
+          "title": "Optimize Images and Performance",
+          "description": "Implement image optimization techniques across all homepage sections",
+          "dependencies": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "details": "Apply comprehensive image optimization including lazy loading, responsive images with srcset, WebP format conversion, and proper sizing. Test and optimize overall page performance using Lighthouse or similar tools to ensure fast loading times.",
+          "status": "done"
+        }
+      ]
     },
     {
       "id": 7,

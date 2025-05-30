@@ -33,6 +33,12 @@
     "rentalDesc": "Alquila bicicletas eléctricas para tus aventuras en Sunshine Coast.",
     "toursDesc": "Únete a nuestros tours guiados para explorar hermosas rutas y paisajes."
   },
+  "about": {
+    "title": "Sobre Nosotros",
+    "subtitle": "Expertos en Movilidad Eléctrica en Sunshine Coast",
+    "description": "Beonbike.pro está dedicada a proporcionar soluciones sostenibles de movilidad eléctrica en Sunshine Coast. Con nuestra experiencia en bicicletas eléctricas, conversiones, alquileres y tours guiados, ofrecemos servicios integrales para todas tus necesidades de movilidad eléctrica.",
+    "learnMore": "Conoce Más Sobre Nosotros"
+  },
   "legal": {
     "legal": "Legal",
     "privacy": "Política de Privacidad",
@@ -44,6 +50,12 @@
     "phone": "Teléfono",
     "sms": "SMS",
     "location": "Ubicación",
-    "rightsReserved": "Todos los derechos reservados."
+    "rightsReserved": "Todos los derechos reservados.",
+    "rights": "Todos los derechos reservados",
+    "followUs": "Síguenos",
+    "newsletter": "Suscríbete a nuestro boletín",
+    "subscribeButton": "Suscribir",
+    "emailPlaceholder": "Tu correo electrónico",
+    "address": "Sunshine Coast, Queensland, Australia"
   }
 } 

@@ -1,6 +1,6 @@
 # Task ID: 6
 # Title: Implement Homepage Layout and Content
-# Status: pending
+# Status: done
 # Dependencies: 2, 3, 4, 5
 # Priority: high
 # Description: Create the homepage with hero section, business verticals overview, primary CTAs, and featured imagery showcasing products and Sunshine Coast scenery.
@@ -32,3 +32,35 @@
 5. Test navigation to vertical-specific pages
 6. Verify content is properly translated in both languages
 7. Test accessibility of all interactive elements
+
+# Subtasks:
+## 1. Implement Hero Section [done]
+### Dependencies: None
+### Description: Create the main hero section with headline, subheading, and primary call-to-action
+### Details:
+Design and implement the hero section with a compelling headline, brief subheading text, primary CTA button, and background image. Ensure the hero is responsive across all device sizes and implement image optimization techniques for the background.
+
+## 2. Develop Business Verticals Grid [done]
+### Dependencies: 6.1
+### Description: Create a grid layout showcasing different business verticals with icons/images
+### Details:
+Implement a responsive grid layout that displays each business vertical with an associated icon or image, title, and brief description. Include hover effects and ensure proper spacing between grid items. Optimize all images for web performance.
+
+## 3. Build About Us Preview Section [done]
+### Dependencies: 6.1
+### Description: Create a condensed version of the About Us section for the homepage
+### Details:
+Design and implement a preview of the About Us section with a compelling image, brief company description, and a 'Learn More' button linking to the full About Us page. Ensure the section has proper padding and responsive behavior.
+
+## 4. Implement Contact CTAs [done]
+### Dependencies: 6.1, 6.2, 6.3
+### Description: Add call-to-action elements for contacting the business
+### Details:
+Create prominent contact call-to-action elements including a contact form preview, phone number, email, and social media links. Style these elements to stand out and encourage user engagement. Ensure all links are properly set up.
+
+## 5. Optimize Images and Performance [done]
+### Dependencies: 6.1, 6.2, 6.3, 6.4
+### Description: Implement image optimization techniques across all homepage sections
+### Details:
+Apply comprehensive image optimization including lazy loading, responsive images with srcset, WebP format conversion, and proper sizing. Test and optimize overall page performance using Lighthouse or similar tools to ensure fast loading times.
+
