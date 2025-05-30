@@ -1,6 +1,6 @@
 # Task ID: 1
 # Title: Project Setup and Repository Configuration
-# Status: pending
+# Status: done
 # Dependencies: None
 # Priority: high
 # Description: Initialize the Next.js project with TypeScript, configure Git repository, and set up the development environment with required dependencies.
@@ -35,7 +35,7 @@
 ### Details:
 Run `npx create-next-app@latest beonbike-pro --typescript --tailwind --eslint` to create a new Next.js 14.x project with TypeScript, Tailwind CSS, and ESLint configurations. Verify the installation by running `npm run dev` and accessing http://localhost:3000.
 
-## 2. Configure Git Repository [pending]
+## 2. Configure Git Repository [done]
 ### Dependencies: 1.1
 ### Description: Set up Git version control with appropriate .gitignore file for Next.js projects.
 ### Details:

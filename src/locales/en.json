@@ -1,0 +1,41 @@
+{
+  "hero": {
+    "title": "Welcome to Beonbike.pro",
+    "subtitle": "Your Electric Mobility Solution in Sunshine Coast"
+  },
+  "navigation": {
+    "ebikes": "Electric Bikes",
+    "conversion": "Conversion Services",
+    "rental": "Rentals", 
+    "tours": "Guided Tours",
+    "contact": "Contact"
+  },
+  "cta": {
+    "learnMore": "Learn more about our services",
+    "contact": "Contact Us"
+  },
+  "company": {
+    "name": "Beonbike.pro",
+    "slogan": "Your electric mobility solution in Sunshine Coast, Australia."
+  },
+  "services": {
+    "title": "Our Services",
+    "ebikes": "Electric Bikes",
+    "conversions": "Conversion Services",
+    "rentals": "Rentals",
+    "tours": "Guided Tours"
+  },
+  "legal": {
+    "legal": "Legal",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "whatsapp": "WhatsApp"
+  },
+  "footer": {
+    "contact": "Contact Us",
+    "phone": "Phone",
+    "sms": "SMS",
+    "location": "Location",
+    "rightsReserved": "All rights reserved."
+  }
+} 

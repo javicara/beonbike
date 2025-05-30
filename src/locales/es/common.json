@@ -1,0 +1,28 @@
+{
+  "navigation": {
+    "home": "Inicio",
+    "ebikes": "Bicicletas Eléctricas",
+    "conversion": "Servicios de Conversión",
+    "rental": "Alquiler",
+    "tours": "Tours Guiados",
+    "contact": "Contacto"
+  },
+  "cta": {
+    "call": "Llamar Ahora",
+    "whatsapp": "WhatsApp",
+    "sms": "Enviar SMS",
+    "learnMore": "Conoce más sobre nuestros servicios",
+    "contact": "Contáctanos",
+    "book": "Reservar ahora"
+  },
+  "hero": {
+    "title": "Bienvenido a Beonbike.pro",
+    "subtitle": "Tu Solución de Movilidad Eléctrica en Sunshine Coast"
+  },
+  "footer": {
+    "address": "Sunshine Coast, Queensland, Australia",
+    "rights": "Todos los derechos reservados",
+    "privacy": "Política de Privacidad",
+    "terms": "Términos de Servicio"
+  }
+} 
