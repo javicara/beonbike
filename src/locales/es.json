@@ -8,11 +8,15 @@
     "conversion": "Servicios de Conversión",
     "rental": "Alquileres",
     "tours": "Tours Guiados",
+    "about": "Sobre Nosotros",
     "contact": "Contacto"
   },
   "cta": {
     "learnMore": "Conoce más sobre nuestros servicios",
-    "contact": "Contáctanos"
+    "contact": "Contáctanos",
+    "call": "Llámanos",
+    "whatsapp": "WhatsApp",
+    "sms": "Enviar SMS"
   },
   "company": {
     "name": "Beonbike.pro",
@@ -23,7 +27,11 @@
     "ebikes": "Bicicletas Eléctricas",
     "conversions": "Servicios de Conversión",
     "rentals": "Alquileres",
-    "tours": "Tours Guiados"
+    "tours": "Tours Guiados",
+    "ebikesDesc": "Explora nuestra gama de bicicletas eléctricas para todos los terrenos y preferencias.",
+    "conversionDesc": "Convierte tu bicicleta convencional en una potente bicicleta eléctrica.",
+    "rentalDesc": "Alquila bicicletas eléctricas para tus aventuras en Sunshine Coast.",
+    "toursDesc": "Únete a nuestros tours guiados para explorar hermosas rutas y paisajes."
   },
   "legal": {
     "legal": "Legal",

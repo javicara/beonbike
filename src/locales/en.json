@@ -8,11 +8,15 @@
     "conversion": "Conversion Services",
     "rental": "Rentals", 
     "tours": "Guided Tours",
+    "about": "About Us",
     "contact": "Contact"
   },
   "cta": {
     "learnMore": "Learn more about our services",
-    "contact": "Contact Us"
+    "contact": "Contact Us",
+    "call": "Call Us",
+    "whatsapp": "WhatsApp Us",
+    "sms": "Send SMS"
   },
   "company": {
     "name": "Beonbike.pro",
@@ -23,7 +27,11 @@
     "ebikes": "Electric Bikes",
     "conversions": "Conversion Services",
     "rentals": "Rentals",
-    "tours": "Guided Tours"
+    "tours": "Guided Tours",
+    "ebikesDesc": "Explore our range of electric bikes for all terrains and preferences.",
+    "conversionDesc": "Convert your regular bike into an electric powerhouse.",
+    "rentalDesc": "Rent electric bikes for your adventures in Sunshine Coast.",
+    "toursDesc": "Join our guided tours to explore beautiful routes and landscapes."
   },
   "legal": {
     "legal": "Legal",
