@@ -1,21 +1,28 @@
 {
+  "meta": {
+    "title": "Beonbike.pro - Electric Mobility in Sunshine Coast",
+    "description": "Beonbike.pro offers electric bike sales, conversion services, rentals, and guided tours in Sunshine Coast, Australia."
+  },
+  "navigation": {
+    "home": "Home",
+    "about": "About Us",
+    "contact": "Contact",
+    "services": "Services",
+    "ebikes": "Electric Bikes",
+    "conversion": "Conversion Services",
+    "rental": "Rental",
+    "tours": "Guided Tours",
+    "language": "Language"
+  },
   "hero": {
     "title": "Welcome to Beonbike.pro",
     "subtitle": "Your Electric Mobility Solution in Sunshine Coast"
-  },
-  "navigation": {
-    "ebikes": "Electric Bikes",
-    "conversion": "Conversion Services",
-    "rental": "Rentals", 
-    "tours": "Guided Tours",
-    "about": "About Us",
-    "contact": "Contact"
   },
   "cta": {
     "learnMore": "Learn more about our services",
     "contact": "Contact Us",
     "call": "Call Us",
-    "whatsapp": "WhatsApp Us",
+    "whatsapp": "WhatsApp",
     "sms": "Send SMS"
   },
   "company": {
@@ -46,16 +53,95 @@
     "whatsapp": "WhatsApp"
   },
   "footer": {
-    "contact": "Contact Us",
-    "phone": "Phone",
-    "sms": "SMS",
-    "location": "Location",
-    "rightsReserved": "All rights reserved.",
-    "rights": "All rights reserved",
-    "followUs": "Follow Us",
-    "newsletter": "Subscribe to our newsletter",
-    "subscribeButton": "Subscribe",
-    "emailPlaceholder": "Your email",
-    "address": "Sunshine Coast, Queensland, Australia"
+    "copyright": "© {year} Beonbike.pro. All rights reserved.",
+    "address": "123 Beach Road, Sunshine Coast, QLD, Australia",
+    "follow": "Follow Us",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service"
+  },
+  "bikes": {
+    "title": "Electric Bike Sales",
+    "subtitle": "Premium Electric Bikes with Bafang Motors",
+    "description": "Explore our range of high-quality electric bikes featuring powerful Bafang motors. Perfect for commuting, adventure, or leisure rides across Sunshine Coast.",
+    "sections": {
+      "catalog": "Our Electric Bikes",
+      "bafang": "Bafang Motor Technology",
+      "specs": "Specifications",
+      "gallery": "Image Gallery",
+      "faq": "Frequently Asked Questions"
+    },
+    "products": {
+      "cityRider": {
+        "name": "City Rider Pro",
+        "shortDesc": "Urban commuter with style and power",
+        "price": "$1,899",
+        "specs": {
+          "motor": "Bafang 250W mid-drive",
+          "battery": "48V 13Ah (624Wh)",
+          "range": "Up to 100km",
+          "speed": "25km/h (legal limit)",
+          "weight": "22kg",
+          "frame": "Aluminum alloy"
+        }
+      },
+      "mountainExplorer": {
+        "name": "Mountain Explorer X",
+        "shortDesc": "Conquer any trail with confidence",
+        "price": "$2,499",
+        "specs": {
+          "motor": "Bafang 350W mid-drive",
+          "battery": "48V 17.5Ah (840Wh)",
+          "range": "Up to 120km",
+          "speed": "25km/h (legal limit)",
+          "weight": "24kg",
+          "frame": "Aluminum alloy, front suspension"
+        }
+      },
+      "beachCruiser": {
+        "name": "Beach Cruiser Elite",
+        "shortDesc": "Stylish comfort for coastal rides",
+        "price": "$2,199",
+        "specs": {
+          "motor": "Bafang 250W rear hub",
+          "battery": "48V 14Ah (672Wh)",
+          "range": "Up to 90km",
+          "speed": "25km/h (legal limit)",
+          "weight": "23kg",
+          "frame": "Step-through aluminum"
+        }
+      },
+      "cargoMax": {
+        "name": "Cargo Max Utility",
+        "shortDesc": "The ultimate utility e-bike",
+        "price": "$2,899",
+        "specs": {
+          "motor": "Bafang 500W mid-drive",
+          "battery": "48V 20Ah (960Wh)",
+          "range": "Up to 80km (with cargo)",
+          "speed": "25km/h (legal limit)",
+          "weight": "30kg",
+          "frame": "Reinforced aluminum, rear rack"
+        }
+      }
+    },
+    "bafang": {
+      "title": "Why Choose Bafang Motors?",
+      "reliability": "Industry-leading reliability",
+      "performance": "Exceptional performance and torque",
+      "efficiency": "Maximum energy efficiency",
+      "warranty": "2-year comprehensive warranty"
+    },
+    "faq": {
+      "q1": "What is the range of your electric bikes?",
+      "a1": "Our electric bikes offer ranges from 80km to 120km on a single charge, depending on the model, terrain, rider weight, and pedal assistance level used.",
+      "q2": "Are your electric bikes legal in Australia?",
+      "a2": "Yes, all our electric bikes comply with Australian regulations, limited to 250W continuous power output and 25km/h maximum assisted speed.",
+      "q3": "Do you offer after-sales service?",
+      "a3": "Absolutely! We provide comprehensive after-sales service including regular maintenance, repairs, and parts replacement for all our electric bikes.",
+      "q4": "Can I test ride before purchasing?",
+      "a4": "Yes, we encourage test rides at our Sunshine Coast location. Contact us to schedule a convenient time for your test ride.",
+      "q5": "What warranty do you offer?",
+      "a5": "All our electric bikes come with a 2-year warranty on the frame, motor, and electrical components, and a 1-year warranty on the battery."
+    }
   }
 } 

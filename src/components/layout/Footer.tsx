@@ -19,6 +19,7 @@ function getSafeTranslation(translationFunc: any, key: string, fallback: string)
   try {
     return translationFunc(key);
   } catch (error) {
+    console.warn(`Translation key not found: ${key}, using fallback`, error);
     return fallback;
   }
 }
@@ -250,76 +251,76 @@ export const Footer = () => {
                   </a>
                 </li>
                 <li>
-                  <div className="flex items-center">
+                  <a 
+                    href="https://wa.me/61403460777" 
+                    className="flex items-center group hover:text-white transition duration-200"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <FaWhatsapp className="w-4 h-4 mr-3 text-blue-400 group-hover:text-blue-300" />
+                    <span>{legal.whatsapp}</span>
+                  </a>
+                </li>
+                <li>
+                  <div className="flex items-center text-gray-300" itemProp="streetAddress">
                     <FaMapMarkerAlt className="w-4 h-4 mr-3 text-blue-400" />
-                    <span itemProp="addressLocality">Sunshine Coast</span>, 
-                    <span itemProp="addressRegion" className="ml-1">QLD</span>, 
-                    <span itemProp="addressCountry" className="ml-1">Australia</span>
+                    <span>{footer.address}</span>
                   </div>
                 </li>
               </ul>
             </address>
           </div>
 
-          {/* Legal and Newsletter */}
+          {/* Newsletter Form */}
           <div>
             <h3 className="text-xl font-bold mb-4 text-blue-400">
-              {legal.legal}
+              {footer.newsletter}
             </h3>
-            <nav aria-label="Legal Navigation">
-              <ul className="space-y-2">
-                <li>
-                  <Link href={`/${locale}/privacy`} className="text-gray-300 hover:text-white hover:underline transition duration-200 flex items-center">
-                    <span className="hover:pl-1 transition-all duration-200">{legal.privacy}</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link href={`/${locale}/terms`} className="text-gray-300 hover:text-white hover:underline transition duration-200 flex items-center">
-                    <span className="hover:pl-1 transition-all duration-200">{legal.terms}</span>
-                  </Link>
-                </li>
-                <li>
-                  <a 
-                    href="https://wa.me/61403460777" 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    className="flex items-center group text-gray-300 hover:text-white hover:underline transition duration-200"
-                  >
-                    <FaWhatsapp className="w-4 h-4 mr-3 text-blue-400 group-hover:text-blue-300" />
-                    <span className="hover:pl-1 transition-all duration-200">{legal.whatsapp}</span>
-                  </a>
-                </li>
-              </ul>
-            </nav>
-
-            {/* Newsletter Subscription */}
-            <div className="mt-6">
-              <h4 className="text-md font-semibold mb-3 text-gray-200">
-                {footer.newsletter}
-              </h4>
-              <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row">
-                <input
-                  type="email"
+            <form onSubmit={handleSubscribe} className="space-y-3">
+              <div>
+                <label htmlFor="email" className="sr-only">Email</label>
+                <input 
+                  type="email" 
+                  id="email" 
+                  name="email" 
                   placeholder={footer.emailPlaceholder}
-                  className="px-4 py-2 bg-gray-800 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 mb-2 sm:mb-0 sm:mr-2"
-                  aria-label={footer.emailPlaceholder}
-                  required
+                  required 
+                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-white placeholder-gray-400"
                 />
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                >
-                  {footer.subscribeButton}
-                </button>
-              </form>
-            </div>
+              </div>
+              <button 
+                type="submit" 
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900 w-full"
+              >
+                {footer.subscribeButton}
+              </button>
+            </form>
           </div>
         </div>
 
-        <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400 text-sm">
-          <p itemProp="copyrightHolder" itemScope itemType="http://schema.org/Organization">
-            &copy; {currentYear} <span itemProp="name">Beonbike.pro</span>. {footer.rights}
+        {/* Copyright & Legal Links */}
+        <div className="mt-12 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center">
+          <p className="text-gray-400 text-center md:text-left mb-4 md:mb-0">
+            &copy; {currentYear} {company.name}. {footer.rights}
           </p>
+          <ul className="flex flex-wrap justify-center space-x-4 text-sm text-gray-400">
+            <li>
+              <Link 
+                href={`/${locale}/privacy`} 
+                className="hover:text-white hover:underline transition duration-200"
+              >
+                {legal.privacy}
+              </Link>
+            </li>
+            <li>
+              <Link 
+                href={`/${locale}/terms`} 
+                className="hover:text-white hover:underline transition duration-200"
+              >
+                {legal.terms}
+              </Link>
+            </li>
+          </ul>
         </div>
       </div>
     </footer>

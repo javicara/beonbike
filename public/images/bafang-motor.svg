@@ -1,0 +1,14 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" fill="#F3F4F6"/>
+  <circle cx="256" cy="256" r="120" fill="#E5E7EB" stroke="#4B5563" strokeWidth="8"/>
+  <circle cx="256" cy="256" r="40" fill="#4B5563"/>
+  <path d="M256 136V176" stroke="#4B5563" strokeWidth="12" strokeLinecap="round"/>
+  <path d="M256 336V376" stroke="#4B5563" strokeWidth="12" strokeLinecap="round"/>
+  <path d="M136 256H176" stroke="#4B5563" strokeWidth="12" strokeLinecap="round"/>
+  <path d="M336 256H376" stroke="#4B5563" strokeWidth="12" strokeLinecap="round"/>
+  <path d="M173.255 173.255L201.882 201.882" stroke="#4B5563" strokeWidth="12" strokeLinecap="round"/>
+  <path d="M310.118 310.118L338.745 338.745" stroke="#4B5563" strokeWidth="12" strokeLinecap="round"/>
+  <path d="M173.255 338.745L201.882 310.118" stroke="#4B5563" strokeWidth="12" strokeLinecap="round"/>
+  <path d="M310.118 201.882L338.745 173.255" stroke="#4B5563" strokeWidth="12" strokeLinecap="round"/>
+  <text x="256" y="420" fontFamily="Arial, sans-serif" fontSize="24" fontWeight="bold" fill="#4B5563" textAnchor="middle">BAFANG MOTOR TECHNOLOGY</text>
+</svg> 

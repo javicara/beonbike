@@ -5,7 +5,8 @@
     "conversion": "Conversion Services",
     "rental": "Rentals",
     "tours": "Guided Tours",
-    "contact": "Contact"
+    "contact": "Contact",
+    "about": "About Us"
   },
   "cta": {
     "call": "Call Now",
@@ -39,12 +40,22 @@
     "ebikes": "Electric Bikes",
     "conversions": "Conversions",
     "rentals": "Rentals",
-    "tours": "Tours"
+    "tours": "Tours",
+    "ebikesDesc": "Explore our range of electric bikes for all terrains and preferences.",
+    "conversionDesc": "Convert your regular bike into an electric powerhouse.",
+    "rentalDesc": "Rent electric bikes for your adventures in Sunshine Coast.",
+    "toursDesc": "Join our guided tours to explore beautiful routes and landscapes."
   },
   "legal": {
     "legal": "Legal",
     "privacy": "Privacy Policy",
     "terms": "Terms of Service",
     "whatsapp": "WhatsApp"
+  },
+  "about": {
+    "title": "About Us",
+    "subtitle": "Electric Mobility Experts in Sunshine Coast",
+    "description": "Beonbike.pro is dedicated to providing sustainable electric mobility solutions in Sunshine Coast. With our expertise in electric bikes, conversions, rentals, and guided tours, we offer comprehensive services for all your electric mobility needs.",
+    "learnMore": "Learn More About Us"
   }
 } 

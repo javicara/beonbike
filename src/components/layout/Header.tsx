@@ -11,6 +11,7 @@ function getSafeTranslation(translationFunc: any, key: string, fallback: string)
   try {
     return translationFunc(key);
   } catch (error) {
+    console.warn(`Translation key not found: ${key}, using fallback`, error);
     return fallback;
   }
 }

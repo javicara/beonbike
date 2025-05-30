@@ -1,6 +1,6 @@
-// Importamos los mensajes de traducción
-import enMessages from '@/locales/en.json';
-import esMessages from '@/locales/es.json';
+// Importamos correctamente los mensajes de traducción
+import enMessages from '@/locales/en/common.json';
+import esMessages from '@/locales/es/common.json';
 
 // Mapa de mensajes por locale
 const messagesMap: Record<string, any> = {

@@ -327,7 +327,7 @@
         4,
         5
       ],
-      "status": "pending",
+      "status": "done",
       "subtasks": [
         {
           "id": 1,
@@ -335,7 +335,7 @@
           "description": "Create a responsive layout that works across all devices (desktops, laptops, tablets, and phones) with intuitive navigation for the e-bike sales page.",
           "dependencies": [],
           "details": "Implement a clean, user-friendly design that highlights premium e-bikes. Include a prominent header with brand storytelling elements, navigation menu, and call-to-action buttons. Ensure the layout supports high-quality imagery and maintains optimal loading speed across all devices.",
-          "status": "pending"
+          "status": "done"
         },
         {
           "id": 2,
@@ -345,7 +345,7 @@
             1
           ],
           "details": "Create filterable product listings with detailed technical specifications for each e-bike model. Include battery capacity, motor power, range, charging time, weight, and frame materials. Implement a comparison feature allowing customers to evaluate multiple models side-by-side. Integrate pricing information with any available promotions or financing options.",
-          "status": "pending"
+          "status": "done"
         },
         {
           "id": 3,
@@ -355,7 +355,7 @@
             1
           ],
           "details": "Design an informative section explaining Bafang motor technology with technical specifications, performance metrics, and reliability data. Include interactive elements such as cutaway diagrams or 3D models to demonstrate motor functionality. Add customer testimonials specific to motor performance and educational content about motor maintenance and longevity.",
-          "status": "pending"
+          "status": "done"
         },
         {
           "id": 4,
@@ -366,7 +366,7 @@
             2
           ],
           "details": "Develop a high-performance image gallery featuring multiple angles of each e-bike model. Implement lightbox functionality for enlarged viewing with zoom capabilities. Ensure images are optimized for fast loading while maintaining high quality. Include 360-degree view options where available and consider adding short video clips demonstrating e-bikes in action.",
-          "status": "pending"
+          "status": "done"
         },
         {
           "id": 5,
@@ -376,7 +376,7 @@
             1
           ],
           "details": "Design an expandable/collapsible FAQ section organized by topics (product specifications, ordering process, shipping, warranty, maintenance, etc.). Implement search functionality within the FAQ section. Include links to relevant product pages where appropriate and add a contact form for questions not covered in the FAQs. Consider adding a live chat option for immediate customer support.",
-          "status": "pending"
+          "status": "done"
         }
       ]
     },

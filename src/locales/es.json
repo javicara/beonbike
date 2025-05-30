@@ -1,15 +1,22 @@
 {
-  "hero": {
-    "title": "Bienvenido a Beonbike.pro",
-    "subtitle": "Tu Solución de Movilidad Eléctrica en Sunshine Coast"
+  "meta": {
+    "title": "Beonbike.pro - Movilidad Eléctrica en Sunshine Coast",
+    "description": "Beonbike.pro ofrece venta de bicicletas eléctricas, servicios de conversión, alquiler y tours guiados en Sunshine Coast, Australia."
   },
   "navigation": {
+    "home": "Inicio",
+    "about": "Nosotros",
+    "contact": "Contacto",
+    "services": "Servicios",
     "ebikes": "Bicicletas Eléctricas",
     "conversion": "Servicios de Conversión",
-    "rental": "Alquileres",
+    "rental": "Alquiler",
     "tours": "Tours Guiados",
-    "about": "Sobre Nosotros",
-    "contact": "Contacto"
+    "language": "Idioma"
+  },
+  "hero": {
+    "title": "Bienvenido a Beonbike.pro",
+    "subtitle": "Tu solución de movilidad eléctrica en Sunshine Coast"
   },
   "cta": {
     "learnMore": "Conoce más sobre nuestros servicios",
@@ -29,14 +36,14 @@
     "rentals": "Alquileres",
     "tours": "Tours Guiados",
     "ebikesDesc": "Explora nuestra gama de bicicletas eléctricas para todos los terrenos y preferencias.",
-    "conversionDesc": "Convierte tu bicicleta convencional en una potente bicicleta eléctrica.",
+    "conversionDesc": "Convierte tu bicicleta regular en una potente bicicleta eléctrica.",
     "rentalDesc": "Alquila bicicletas eléctricas para tus aventuras en Sunshine Coast.",
     "toursDesc": "Únete a nuestros tours guiados para explorar hermosas rutas y paisajes."
   },
   "about": {
     "title": "Sobre Nosotros",
     "subtitle": "Expertos en Movilidad Eléctrica en Sunshine Coast",
-    "description": "Beonbike.pro está dedicada a proporcionar soluciones sostenibles de movilidad eléctrica en Sunshine Coast. Con nuestra experiencia en bicicletas eléctricas, conversiones, alquileres y tours guiados, ofrecemos servicios integrales para todas tus necesidades de movilidad eléctrica.",
+    "description": "Beonbike.pro está dedicado a proporcionar soluciones sostenibles de movilidad eléctrica en Sunshine Coast. Con nuestra experiencia en bicicletas eléctricas, conversiones, alquileres y tours guiados, ofrecemos servicios completos para todas tus necesidades de movilidad eléctrica.",
     "learnMore": "Conoce Más Sobre Nosotros"
   },
   "legal": {
@@ -46,16 +53,95 @@
     "whatsapp": "WhatsApp"
   },
   "footer": {
-    "contact": "Contáctanos",
-    "phone": "Teléfono",
-    "sms": "SMS",
-    "location": "Ubicación",
-    "rightsReserved": "Todos los derechos reservados.",
-    "rights": "Todos los derechos reservados",
-    "followUs": "Síguenos",
-    "newsletter": "Suscríbete a nuestro boletín",
-    "subscribeButton": "Suscribir",
-    "emailPlaceholder": "Tu correo electrónico",
-    "address": "Sunshine Coast, Queensland, Australia"
+    "copyright": "© {year} Beonbike.pro. Todos los derechos reservados.",
+    "address": "123 Beach Road, Sunshine Coast, QLD, Australia",
+    "follow": "Síguenos",
+    "privacy": "Política de Privacidad",
+    "terms": "Términos de Servicio"
+  },
+  "bikes": {
+    "title": "Venta de Bicicletas Eléctricas",
+    "subtitle": "Bicicletas Eléctricas Premium con Motores Bafang",
+    "description": "Explora nuestra gama de bicicletas eléctricas de alta calidad con potentes motores Bafang. Perfectas para desplazamientos, aventuras o paseos de ocio por Sunshine Coast.",
+    "sections": {
+      "catalog": "Nuestras Bicicletas Eléctricas",
+      "bafang": "Tecnología de Motor Bafang",
+      "specs": "Especificaciones",
+      "gallery": "Galería de Imágenes",
+      "faq": "Preguntas Frecuentes"
+    },
+    "products": {
+      "cityRider": {
+        "name": "City Rider Pro",
+        "shortDesc": "Commuter urbano con estilo y potencia",
+        "price": "$1,899",
+        "specs": {
+          "motor": "Bafang 250W mid-drive",
+          "battery": "48V 13Ah (624Wh)",
+          "range": "Hasta 100km",
+          "speed": "25km/h (límite legal)",
+          "weight": "22kg",
+          "frame": "Aleación de aluminio"
+        }
+      },
+      "mountainExplorer": {
+        "name": "Mountain Explorer X",
+        "shortDesc": "Conquista cualquier sendero con confianza",
+        "price": "$2,499",
+        "specs": {
+          "motor": "Bafang 350W mid-drive",
+          "battery": "48V 17.5Ah (840Wh)",
+          "range": "Hasta 120km",
+          "speed": "25km/h (límite legal)",
+          "weight": "24kg",
+          "frame": "Aleación de aluminio, suspensión delantera"
+        }
+      },
+      "beachCruiser": {
+        "name": "Beach Cruiser Elite",
+        "shortDesc": "Elegante comodidad para paseos costeros",
+        "price": "$2,199",
+        "specs": {
+          "motor": "Bafang 250W rear hub",
+          "battery": "48V 14Ah (672Wh)",
+          "range": "Hasta 90km",
+          "speed": "25km/h (límite legal)",
+          "weight": "23kg",
+          "frame": "Aluminio de paso bajo"
+        }
+      },
+      "cargoMax": {
+        "name": "Cargo Max Utility",
+        "shortDesc": "La mejor bicicleta eléctrica utilitaria",
+        "price": "$2,899",
+        "specs": {
+          "motor": "Bafang 500W mid-drive",
+          "battery": "48V 20Ah (960Wh)",
+          "range": "Hasta 80km (con carga)",
+          "speed": "25km/h (límite legal)",
+          "weight": "30kg",
+          "frame": "Aluminio reforzado, portabultos trasero"
+        }
+      }
+    },
+    "bafang": {
+      "title": "¿Por qué elegir motores Bafang?",
+      "reliability": "Fiabilidad líder en la industria",
+      "performance": "Rendimiento y par excepcionales",
+      "efficiency": "Máxima eficiencia energética",
+      "warranty": "Garantía integral de 2 años"
+    },
+    "faq": {
+      "q1": "¿Cuál es la autonomía de sus bicicletas eléctricas?",
+      "a1": "Nuestras bicicletas eléctricas ofrecen autonomías de 80km a 120km con una sola carga, dependiendo del modelo, terreno, peso del ciclista y nivel de asistencia utilizado.",
+      "q2": "¿Son legales sus bicicletas eléctricas en Australia?",
+      "a2": "Sí, todas nuestras bicicletas eléctricas cumplen con las regulaciones australianas, limitadas a 250W de potencia continua y 25km/h de velocidad máxima asistida.",
+      "q3": "¿Ofrecen servicio postventa?",
+      "a3": "¡Absolutamente! Proporcionamos un servicio postventa completo que incluye mantenimiento regular, reparaciones y reemplazo de piezas para todas nuestras bicicletas eléctricas.",
+      "q4": "¿Puedo hacer una prueba antes de comprar?",
+      "a4": "Sí, recomendamos pruebas en nuestra ubicación de Sunshine Coast. Contáctanos para programar un horario conveniente para tu prueba.",
+      "q5": "¿Qué garantía ofrecen?",
+      "a5": "Todas nuestras bicicletas eléctricas vienen con una garantía de 2 años en el cuadro, motor y componentes eléctricos, y una garantía de 1 año en la batería."
+    }
   }
 } 

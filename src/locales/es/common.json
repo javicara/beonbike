@@ -5,7 +5,8 @@
     "conversion": "Servicios de Conversión",
     "rental": "Alquiler",
     "tours": "Tours Guiados",
-    "contact": "Contacto"
+    "contact": "Contacto",
+    "about": "Nosotros"
   },
   "cta": {
     "call": "Llamar Ahora",
@@ -39,12 +40,22 @@
     "ebikes": "Bicicletas Eléctricas",
     "conversions": "Conversiones",
     "rentals": "Alquiler",
-    "tours": "Tours"
+    "tours": "Tours",
+    "ebikesDesc": "Explora nuestra gama de bicicletas eléctricas para todos los terrenos y preferencias.",
+    "conversionDesc": "Convierte tu bicicleta normal en una potente bicicleta eléctrica.",
+    "rentalDesc": "Alquila bicicletas eléctricas para tus aventuras en Sunshine Coast.",
+    "toursDesc": "Únete a nuestros tours guiados para explorar hermosas rutas y paisajes."
   },
   "legal": {
     "legal": "Legal",
     "privacy": "Política de Privacidad",
     "terms": "Términos de Servicio",
     "whatsapp": "WhatsApp"
+  },
+  "about": {
+    "title": "Nosotros",
+    "subtitle": "Expertos en Movilidad Eléctrica en Sunshine Coast",
+    "description": "Beonbike.pro está dedicado a proporcionar soluciones sostenibles de movilidad eléctrica en Sunshine Coast. Con nuestra experiencia en bicicletas eléctricas, conversiones, alquileres y tours guiados, ofrecemos servicios completos para todas tus necesidades de movilidad eléctrica.",
+    "learnMore": "Conoce más sobre nosotros"
   }
 } 
