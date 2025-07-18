@@ -9,9 +9,8 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="space-y-4">
-            <Link href="/" className="flex items-center space-x-2">
+            <Link href="/" className="flex items-center">
               <span className="text-2xl font-bold text-primary">Beonbike</span>
-              <span className="text-2xl font-bold text-white">.pro</span>
             </Link>
             <p className="text-gray-300">
               Your premier electric mobility solution in Sunshine Coast, Australia.
@@ -87,7 +86,7 @@ export function Footer() {
         </div>
 
         <div className="mt-8 pt-8 border-t border-gray-800 text-center text-gray-400">
-          <p>&copy; {new Date().getFullYear()} Beonbike.pro. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Beonbike. All rights reserved.</p>
         </div>
       </div>
     </footer>
