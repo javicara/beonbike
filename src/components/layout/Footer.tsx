@@ -10,7 +10,7 @@ export function Footer() {
           {/* Company Info */}
           <div className="space-y-4">
             <Link href="/" className="flex items-center">
-              <span className="text-2xl font-bold text-primary">Beonbike</span>
+              <span className="text-2xl font-bold text-primary">Beonbikes</span>
             </Link>
             <p className="text-gray-300">
               Your premier electric mobility solution in Sunshine Coast, Australia.
@@ -67,8 +67,8 @@ export function Footer() {
               </div>
               <div className="flex items-center space-x-3">
                 <FaEnvelope className="w-4 h-4 text-primary" />
-                <Link href="mailto:info@beonbike.pro" className="text-gray-300 hover:text-primary transition-colors">
-                  info@beonbike.pro
+                <Link href="mailto:info@beonbikes.com" className="text-gray-300 hover:text-primary transition-colors">
+                  info@beonbikes.com
                 </Link>
               </div>
               <div className="flex items-center space-x-3">
@@ -86,7 +86,7 @@ export function Footer() {
         </div>
 
         <div className="mt-8 pt-8 border-t border-gray-800 text-center text-gray-400">
-          <p>&copy; {new Date().getFullYear()} Beonbike. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Beonbikes. All rights reserved.</p>
         </div>
       </div>
     </footer>

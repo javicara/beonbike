@@ -50,8 +50,8 @@ const contactMethods = [
     icon: FaEnvelope,
     title: 'Email',
     description: 'Email us for detailed inquiries',
-    value: 'info@beonbike.pro',
-    link: 'mailto:info@beonbike.pro',
+    value: 'info@beonbikes.com',
+    link: 'mailto:info@beonbikes.com',
     color: 'text-primary'
   }
 ]

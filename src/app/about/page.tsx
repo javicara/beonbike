@@ -80,7 +80,7 @@ export default function AboutPage() {
               transition={{ duration: 0.6 }}
               className="text-4xl md:text-5xl font-bold text-gray-900 mb-6"
             >
-              About Beonbike.pro
+              About Beonbikes
             </motion.h1>
             
             <motion.p 
@@ -112,7 +112,7 @@ export default function AboutPage() {
                 </h2>
                 <div className="prose prose-lg text-gray-600 space-y-4">
                   <p>
-                    Beonbike.pro was born from a passion for sustainable transportation and 
+                    Beonbikes was born from a passion for sustainable transportation and 
                     a deep love for the Sunshine Coast. Founded in 2021, we recognized the 
                     growing need for eco-friendly mobility solutions in our beautiful region.
                   </p>
