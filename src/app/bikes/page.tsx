@@ -11,90 +11,107 @@ import {
   FaWhatsapp, 
   FaSms, 
   FaBolt, 
-  FaWrench, 
-  FaBicycle, 
-  FaMapMarked,
-  FaLeaf,
-  FaShieldAlt,
-  FaUsers
+  FaBatteryFull, 
+  FaShieldAlt, 
+  FaWrench,
+  FaMapMarkerAlt,
+  FaCheckCircle
 } from 'react-icons/fa'
 
-const services = [
+const bikeModels = [
   {
-    icon: FaBolt,
-    title: 'Electric Bike Sales',
-    description: 'Premium electric bikes with Bafang motors for all terrains and preferences.',
-    href: '/bikes',
-    color: 'bg-primary',
+    name: 'Urban Commuter',
+    price: 'From $2,499',
+    image: '/images/bike-urban.jpg',
+    features: [
+      'Bafang Mid-Drive Motor',
+      '48V 14Ah Samsung Battery',
+      '80km Range',
+      'Shimano 8-Speed',
+      'Hydraulic Disc Brakes',
+      'LED Lights & Display'
+    ],
+    description: 'Perfect for daily commuting and city rides with comfort and efficiency.'
   },
   {
-    icon: FaWrench,
-    title: 'Bike Conversions',
-    description: 'Transform your regular bike into an electric powerhouse with our expert conversion services.',
-    href: '/conversions',
-    color: 'bg-secondary',
+    name: 'Mountain Explorer',
+    price: 'From $3,299',
+    image: '/images/bike-mountain.jpg',
+    features: [
+      'Bafang Ultra Motor',
+      '48V 17.5Ah Battery',
+      '100km Range',
+      'Full Suspension',
+      'All-Terrain Tires',
+      'Waterproof Design'
+    ],
+    description: 'Built for adventure and challenging terrain with maximum power.'
   },
   {
-    icon: FaBicycle,
-    title: 'Bike Rentals',
-    description: 'Rent electric bikes for your adventures and daily commute in Sunshine Coast.',
-    href: '/rentals',
-    color: 'bg-accent',
-  },
-  {
-    icon: FaMapMarked,
-    title: 'Guided Tours',
-    description: 'Explore Sunshine Coast\'s beautiful routes with our experienced local guides.',
-    href: '/tours',
-    color: 'bg-primary',
-  },
+    name: 'Cargo Hauler',
+    price: 'From $3,799',
+    image: '/images/bike-cargo.jpg',
+    features: [
+      'Bafang Mid-Drive Motor',
+      '48V 20Ah Battery',
+      '90km Range',
+      'Heavy-Duty Frame',
+      '80kg Load Capacity',
+      'Integrated Cargo Box'
+    ],
+    description: 'Ideal for families and businesses needing extra carrying capacity.'
+  }
 ]
 
-const features = [
+const bafangFeatures = [
   {
-    icon: FaLeaf,
-    title: 'Eco-Friendly',
-    description: 'Sustainable transportation solutions for a greener future.',
+    icon: FaBolt,
+    title: 'Powerful Performance',
+    description: 'Up to 1000W of power for any terrain'
+  },
+  {
+    icon: FaBatteryFull,
+    title: 'Long Range',
+    description: 'Up to 100km on a single charge'
   },
   {
     icon: FaShieldAlt,
-    title: 'Reliable',
-    description: 'Quality products and services you can trust.',
+    title: 'Reliable Quality',
+    description: '2-year warranty on all components'
   },
   {
-    icon: FaUsers,
-    title: 'Local Expertise',
-    description: 'Deep knowledge of Sunshine Coast terrain and routes.',
-  },
+    icon: FaWrench,
+    title: 'Easy Maintenance',
+    description: 'Local service and support available'
+  }
 ]
 
-export default function HomePage() {
+export default function BikesPage() {
   return (
     <div className="min-h-screen bg-white">
       <Header />
       
       {/* Hero Section */}
-      <section className="pt-16 pb-20 bg-gradient-to-br from-primary/5 to-secondary/5">
+      <section className="pt-16 pb-20 bg-gradient-to-br from-primary/10 to-secondary/10">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
             <motion.h1 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="text-4xl md:text-6xl font-bold text-gray-900 mb-6"
+              className="text-4xl md:text-5xl font-bold text-gray-900 mb-6"
             >
-              Your Electric Mobility Solution in{' '}
-              <span className="text-primary">Sunshine Coast</span>
+              Premium Electric Bikes
             </motion.h1>
             
             <motion.p 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-xl md:text-2xl text-gray-600 mb-8 max-w-2xl mx-auto"
+              className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto"
             >
-              Premium electric bikes, expert conversions, convenient rentals, and guided tours 
-              throughout beautiful Sunshine Coast, Australia.
+              Discover our range of high-quality electric bikes featuring Bafang motors, 
+              designed for every riding style and terrain in Sunshine Coast.
             </motion.p>
             
             <motion.div
@@ -103,15 +120,15 @@ export default function HomePage() {
               transition={{ duration: 0.6, delay: 0.4 }}
               className="flex flex-col sm:flex-row gap-4 justify-center items-center"
             >
-              <Link href="/contact">
-                <Button size="lg" className="shadow-lg">
-                  Get Started Today
+              <Link href="#models">
+                <Button size="lg">
+                  View Our Bikes
                 </Button>
               </Link>
               
-              <Link href="#services">
+              <Link href="#contact">
                 <Button variant="outline" size="lg">
-                  Explore Services
+                  Get Quote
                 </Button>
               </Link>
             </motion.div>
@@ -119,64 +136,81 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Services Section */}
-      <section id="services" className="py-20 bg-white">
+      {/* Bike Models Section */}
+      <section id="models" className="py-20 bg-white">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Our Services
+              Our Electric Bike Models
             </h2>
             <p className="text-lg text-gray-600">
-              Comprehensive electric mobility solutions tailored to your needs
+              Choose from our carefully selected range of electric bikes
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {services.map((service, index) => (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {bikeModels.map((bike, index) => (
               <motion.div
-                key={service.title}
+                key={bike.name}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="group"
+                className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden"
               >
-                <Link href={service.href}>
-                  <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 h-full border border-gray-100 hover:border-primary/20">
-                    <div className={`w-12 h-12 ${service.color} rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                      <service.icon className="w-6 h-6 text-white" />
-                    </div>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-primary transition-colors">
-                      {service.title}
-                    </h3>
-                    <p className="text-gray-600 mb-4">
-                      {service.description}
-                    </p>
-                    <div className="text-primary font-medium group-hover:translate-x-1 transition-transform duration-300 inline-flex items-center">
-                      Learn More →
-                    </div>
+                <div className="h-64 bg-gradient-to-br from-primary/5 to-secondary/5 flex items-center justify-center">
+                  <div className="text-6xl text-primary/30">
+                    <FaBolt />
                   </div>
-                </Link>
+                </div>
+                
+                <div className="p-6">
+                  <div className="flex justify-between items-start mb-4">
+                    <h3 className="text-xl font-semibold text-gray-900">
+                      {bike.name}
+                    </h3>
+                    <span className="text-primary font-bold text-lg">
+                      {bike.price}
+                    </span>
+                  </div>
+                  
+                  <p className="text-gray-600 mb-4">
+                    {bike.description}
+                  </p>
+                  
+                  <div className="space-y-2 mb-6">
+                    {bike.features.map((feature, i) => (
+                      <div key={i} className="flex items-center text-sm text-gray-600">
+                        <FaCheckCircle className="w-4 h-4 text-secondary mr-2" />
+                        {feature}
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <Button fullWidth>
+                    Learn More
+                  </Button>
+                </div>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
+      {/* Bafang Motors Section */}
       <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Why Choose Beonbike.pro?
+              Powered by Bafang Motors
             </h2>
             <p className="text-lg text-gray-600">
-              We're committed to providing the best electric mobility experience in Sunshine Coast
+              Industry-leading motor technology for superior performance and reliability
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {features.map((feature, index) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {bafangFeatures.map((feature, index) => (
               <motion.div
                 key={feature.title}
                 initial={{ opacity: 0, y: 20 }}
@@ -200,15 +234,15 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 bg-primary text-white">
+      {/* Contact Section */}
+      <section id="contact" className="py-20 bg-primary text-white">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl md:text-4xl font-bold mb-6">
-              Ready to Go Electric?
+              Ready to Find Your Perfect Electric Bike?
             </h2>
             <p className="text-xl mb-8 opacity-90">
-              Contact us today to find the perfect electric mobility solution for you
+              Contact us today for personalized recommendations and test rides
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">

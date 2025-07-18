@@ -1,5 +1,0 @@
-<svg width="600" height="400" xmlns="http://www.w3.org/2000/svg">
-  <rect width="600" height="400" fill="#4B5563"/>
-  <rect x="200" y="100" width="200" height="200" fill="#2563EB" opacity="0.7"/>
-  <text x="300" y="210" font-family="Arial" font-size="24" fill="white" text-anchor="middle">Conversion Services</text>
-</svg> 
