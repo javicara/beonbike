@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/button'
 import { 
   FaPhone, 
   FaWhatsapp, 
@@ -187,7 +187,7 @@ export default function BikesPage() {
                     ))}
                   </div>
                   
-                  <Button fullWidth>
+                  <Button className="w-full">
                     Learn More
                   </Button>
                 </div>

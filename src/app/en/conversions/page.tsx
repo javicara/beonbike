@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/button'
 import { 
   FaPhone, 
   FaWhatsapp, 
@@ -297,9 +297,9 @@ export default function ConversionsPage() {
                     ))}
                   </div>
                   
-                  <Button 
-                    fullWidth 
-                    variant={index === 1 ? 'primary' : 'outline'}
+                  <Button
+                    className="w-full"
+                    variant={index === 1 ? 'default' : 'outline'}
                   >
                     Get Quote
                   </Button>

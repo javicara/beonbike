@@ -16,8 +16,10 @@ import {
   HelpCircle,
   Star,
   Instagram,
-  Facebook
+  Facebook,
+  X
 } from 'lucide-react';
+import { BackpackerBookingForm } from '@/components/forms/BackpackerBookingForm';
 
 /**
  * Mobile-First Landing Page for "Be On Bikes" - Backpacker Segment
@@ -27,6 +29,7 @@ import {
 
 export default function HomePage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [showBookingModal, setShowBookingModal] = useState(false);
 
   const toggleFaq = (index: number) => {
     setOpenFaq(openFaq === index ? null : index);
@@ -324,19 +327,50 @@ export default function HomePage() {
             <div className="bg-white border rounded-xl p-6 text-center">
               <h3 className="font-bold text-xl mb-2">Listo para rodar?</h3>
               <p className="text-slate-500 mb-4">Reserva tu bici hoy mismo y empieza a moverte.</p>
-              <a
-                href={whatsappLink}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                onClick={() => setShowBookingModal(true)}
                 className="block w-full bg-slate-900 text-white font-bold py-4 rounded-xl hover:bg-slate-800 transition-colors"
               >
                 Reservar Ahora
-              </a>
+              </button>
             </div>
           </section>
         </div>
 
       </main>
+
+      {/* --- BOOKING MODAL --- */}
+      {showBookingModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={() => setShowBookingModal(false)}
+          />
+
+          {/* Modal Content */}
+          <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+            {/* Header */}
+            <div className="sticky top-0 bg-white border-b border-slate-100 px-6 py-4 flex items-center justify-between rounded-t-2xl">
+              <div>
+                <h2 className="text-xl font-bold text-slate-900">Reservar E-Bike</h2>
+                <p className="text-sm text-slate-500">Completa tus datos</p>
+              </div>
+              <button
+                onClick={() => setShowBookingModal(false)}
+                className="p-2 hover:bg-slate-100 rounded-full transition-colors"
+              >
+                <X size={20} className="text-slate-500" />
+              </button>
+            </div>
+
+            {/* Form */}
+            <div className="p-6">
+              <BackpackerBookingForm />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* --- FOOTER --- */}
       <footer className="bg-slate-900 text-slate-400 py-10 px-4 md:px-8 mt-8 pb-32 md:pb-10">
@@ -393,15 +427,13 @@ export default function HomePage() {
           </a>
 
           {/* Primary Action */}
-          <a
-            href={whatsappLink}
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            onClick={() => setShowBookingModal(true)}
             className="flex-[2.5] bg-orange-600 text-white rounded-xl font-bold text-lg py-3 shadow-lg shadow-orange-200 active:scale-95 transition-transform flex items-center justify-center gap-2"
           >
             Reservar Ahora
             <ChevronRight size={20} strokeWidth={3} />
-          </a>
+          </button>
         </div>
         <div className="text-center mt-2">
           <p className="text-[10px] text-slate-400 font-medium">

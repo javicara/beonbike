@@ -98,3 +98,5 @@ node_modules/
 tasks.json
 tasks/ 
 CLAUDE.md
+
+/src/generated/prisma

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/button'
 import { FaPhone, FaBars, FaTimes } from 'react-icons/fa'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -100,7 +100,7 @@ export function Header() {
                 ))}
                 <div className="px-4 pt-4 border-t border-gray-200">
                   <Link href="tel:+61403460777" className="block">
-                    <Button size="sm" fullWidth className="flex items-center justify-center space-x-2">
+                    <Button size="sm" className="w-full flex items-center justify-center space-x-2">
                       <FaPhone className="w-4 h-4" />
                       <span>+61 403 460 777</span>
                     </Button>

@@ -4,7 +4,7 @@ import React from 'react'
 import Link from 'next/link'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/button'
 
 
 export default function RentalsPage() {
@@ -69,7 +69,7 @@ export default function RentalsPage() {
                   </ul>
                 </div>
                 
-                <Button fullWidth>Book Now</Button>
+                <Button className="w-full">Book Now</Button>
               </div>
               
               <div className="bg-white p-6 rounded-lg shadow-lg border-2 border-blue-600 relative">
@@ -91,7 +91,7 @@ export default function RentalsPage() {
                   </ul>
                 </div>
                 
-                <Button fullWidth>Book Now</Button>
+                <Button className="w-full">Book Now</Button>
               </div>
               
               <div className="bg-white p-6 rounded-lg shadow-lg border">
@@ -111,7 +111,7 @@ export default function RentalsPage() {
                   </ul>
                 </div>
                 
-                <Button fullWidth>Book Now</Button>
+                <Button className="w-full">Book Now</Button>
               </div>
             </div>
           </div>
