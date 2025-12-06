@@ -270,6 +270,14 @@ export default function HomePage() {
                   name: "Cami (Argentina)",
                   text: "Trabajo en Noosa. Subo Noosa Dr desde Hastings St todos los dias y ni se siente. Un 10 la bateria."
                 },
+                {
+                  name: "Lucas (Argentina)",
+                  text: "La bateria dura muchismo! Voy al trabajo ida y vuelta 3 veces a la semana y todavia me queda carga. Increible."
+                },
+                {
+                  name: "Sofia (Chile)",
+                  text: "Sin auto aca es complicado, los buses no pasan tan seguido y estacionar es imposible. La e-bike me ayuda muchismo, voy a todos lados!"
+                },
               ].map((review, i) => (
                 <div key={i} className="min-w-[260px] bg-white p-4 rounded-xl border border-slate-100 shadow-sm snap-center">
                   <div className="flex text-yellow-400 mb-2">
