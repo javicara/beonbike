@@ -9,7 +9,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="space-y-4">
-            <Link href="/" className="flex items-center">
+            <Link href="/en" className="flex items-center">
               <span className="text-2xl font-bold text-primary">Beonbikes</span>
             </Link>
             <p className="text-gray-300">
@@ -21,16 +21,16 @@ export function Footer() {
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Services</h3>
             <div className="space-y-2">
-              <Link href="/bikes" className="block text-gray-300 hover:text-primary transition-colors">
+              <Link href="/en/bikes" className="block text-gray-300 hover:text-primary transition-colors">
                 Electric Bikes
               </Link>
-              <Link href="/conversions" className="block text-gray-300 hover:text-primary transition-colors">
+              <Link href="/en/conversions" className="block text-gray-300 hover:text-primary transition-colors">
                 Conversions
               </Link>
-              <Link href="/rentals" className="block text-gray-300 hover:text-primary transition-colors">
+              <Link href="/en/rentals" className="block text-gray-300 hover:text-primary transition-colors">
                 Rentals
               </Link>
-              <Link href="/tours" className="block text-gray-300 hover:text-primary transition-colors">
+              <Link href="/en/tours" className="block text-gray-300 hover:text-primary transition-colors">
                 Guided Tours
               </Link>
             </div>
@@ -40,17 +40,14 @@ export function Footer() {
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Company</h3>
             <div className="space-y-2">
-              <Link href="/about" className="block text-gray-300 hover:text-primary transition-colors">
+              <Link href="/en/about" className="block text-gray-300 hover:text-primary transition-colors">
                 About Us
               </Link>
-              <Link href="/contact" className="block text-gray-300 hover:text-primary transition-colors">
+              <Link href="/en/contact" className="block text-gray-300 hover:text-primary transition-colors">
                 Contact
               </Link>
-              <Link href="/privacy" className="block text-gray-300 hover:text-primary transition-colors">
-                Privacy Policy
-              </Link>
-              <Link href="/terms" className="block text-gray-300 hover:text-primary transition-colors">
-                Terms of Service
+              <Link href="/" className="block text-gray-300 hover:text-primary transition-colors">
+                Espanol
               </Link>
             </div>
           </div>

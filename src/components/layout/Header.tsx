@@ -7,13 +7,13 @@ import { FaPhone, FaBars, FaTimes } from 'react-icons/fa'
 import { motion, AnimatePresence } from 'framer-motion'
 
 const navigation = [
-  { name: 'Home', href: '/' },
-  { name: 'Electric Bikes', href: '/bikes' },
-  { name: 'Conversions', href: '/conversions' },
-  { name: 'Rentals', href: '/rentals' },
-  { name: 'Tours', href: '/tours' },
-  { name: 'About', href: '/about' },
-  { name: 'Contact', href: '/contact' },
+  { name: 'Home', href: '/en' },
+  { name: 'Electric Bikes', href: '/en/bikes' },
+  { name: 'Conversions', href: '/en/conversions' },
+  { name: 'Rentals', href: '/en/rentals' },
+  { name: 'Tours', href: '/en/tours' },
+  { name: 'About', href: '/en/about' },
+  { name: 'Contact', href: '/en/contact' },
 ]
 
 export function Header() {
@@ -36,7 +36,7 @@ export function Header() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center">
+          <Link href="/en" className="flex items-center">
             <span className="text-2xl font-bold text-primary">Beonbikes</span>
           </Link>
 
