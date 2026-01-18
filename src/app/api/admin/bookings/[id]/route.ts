@@ -64,7 +64,10 @@ export async function PATCH(
       contractStatus,
       bondAmount,
       bondStatus,
-      notes
+      notes,
+      startDate,
+      endDate,
+      weeks
     } = body;
 
     // Validate status if provided
@@ -84,6 +87,9 @@ export async function PATCH(
     if (bondAmount !== undefined) updateData.bondAmount = parseFloat(bondAmount);
     if (bondStatus !== undefined) updateData.bondStatus = bondStatus;
     if (notes !== undefined) updateData.notes = notes;
+    if (startDate !== undefined) updateData.startDate = new Date(startDate);
+    if (endDate !== undefined) updateData.endDate = new Date(endDate);
+    if (weeks !== undefined) updateData.weeks = parseInt(weeks);
 
     // If assigning a bike and confirming, update bike status
     if (bikeId && status === 'confirmed') {

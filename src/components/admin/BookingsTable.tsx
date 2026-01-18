@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { format, differenceInWeeks } from 'date-fns';
+import { format, differenceInWeeks, addWeeks } from 'date-fns';
 import { es } from 'date-fns/locale';
 
 interface Payment {
@@ -505,25 +505,98 @@ export default function BookingsTable({ initialBookings, bikes, defaultPrice }: 
                 </div>
               </div>
 
-              {/* Info */}
+              {/* Dates - Editable */}
+              <div className="bg-slate-700/50 rounded-lg p-4 space-y-4">
+                <div className="flex justify-between items-center">
+                  <h3 className="text-white font-medium">Fechas del Alquiler</h3>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => {
+                        const newEndDate = addWeeks(new Date(selectedBooking.endDate), 1);
+                        updateBooking(selectedBooking.id, {
+                          endDate: newEndDate.toISOString(),
+                          weeks: selectedBooking.weeks + 1,
+                        });
+                      }}
+                      disabled={loading}
+                      className="px-3 py-1 bg-orange-500/20 text-orange-400 rounded-lg text-sm hover:bg-orange-500/30 transition-colors"
+                    >
+                      +1 Semana
+                    </button>
+                    <button
+                      onClick={() => {
+                        const newEndDate = addWeeks(new Date(selectedBooking.endDate), 2);
+                        updateBooking(selectedBooking.id, {
+                          endDate: newEndDate.toISOString(),
+                          weeks: selectedBooking.weeks + 2,
+                        });
+                      }}
+                      disabled={loading}
+                      className="px-3 py-1 bg-orange-500/20 text-orange-400 rounded-lg text-sm hover:bg-orange-500/30 transition-colors"
+                    >
+                      +2 Semanas
+                    </button>
+                  </div>
+                </div>
+                <div className="grid grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-slate-400 text-sm mb-1">Fecha Inicio</label>
+                    <input
+                      type="date"
+                      value={format(new Date(selectedBooking.startDate), 'yyyy-MM-dd')}
+                      onChange={(e) => updateBooking(selectedBooking.id, { startDate: new Date(e.target.value).toISOString() })}
+                      className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-400 text-sm mb-1">Fecha Fin</label>
+                    <input
+                      type="date"
+                      value={format(new Date(selectedBooking.endDate), 'yyyy-MM-dd')}
+                      onChange={(e) => updateBooking(selectedBooking.id, { endDate: new Date(e.target.value).toISOString() })}
+                      className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-400 text-sm mb-1">Semanas</label>
+                    <input
+                      type="number"
+                      min="1"
+                      value={selectedBooking.weeks}
+                      onChange={(e) => {
+                        const newWeeks = parseInt(e.target.value) || 1;
+                        const newEndDate = addWeeks(new Date(selectedBooking.startDate), newWeeks);
+                        updateBooking(selectedBooking.id, {
+                          weeks: newWeeks,
+                          endDate: newEndDate.toISOString(),
+                        });
+                      }}
+                      className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    />
+                  </div>
+                </div>
+                <div className="text-sm text-slate-400">
+                  Total: <span className="text-white font-medium">{selectedBooking.weeks} semanas × ${selectedBooking.agreedPrice || defaultPrice} = ${selectedBooking.weeks * (selectedBooking.agreedPrice || defaultPrice)} AUD</span>
+                </div>
+              </div>
+
+              {/* Client Info */}
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <p className="text-slate-400">Período</p>
-                  <p className="text-white">
-                    {format(new Date(selectedBooking.startDate), 'dd MMM yyyy', { locale: es })} - {format(new Date(selectedBooking.endDate), 'dd MMM yyyy', { locale: es })}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-slate-400">Semanas</p>
-                  <p className="text-white">{selectedBooking.weeks} semanas</p>
-                </div>
-                <div>
-                  <p className="text-slate-400">Dirección</p>
+                  <p className="text-slate-400">Direccion</p>
                   <p className="text-white">{selectedBooking.address || '-'}</p>
                 </div>
                 <div>
                   <p className="text-slate-400">Documento</p>
                   <p className="text-white">{selectedBooking.documentId || '-'}</p>
+                </div>
+                <div>
+                  <p className="text-slate-400">WhatsApp</p>
+                  <p className="text-white">{selectedBooking.hasWhatsapp ? 'Si' : 'No'}</p>
+                </div>
+                <div>
+                  <p className="text-slate-400">Creado por</p>
+                  <p className="text-white">{selectedBooking.createdBy === 'admin' ? 'Admin' : 'Formulario'}</p>
                 </div>
               </div>
 
