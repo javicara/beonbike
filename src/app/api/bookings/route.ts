@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
     // Enviar email de notificación al negocio
     await resend.emails.send({
       from: 'Be On Bikes <reservas@beonbikes.com>',
-      to: ['info@beonbikes.com'],
+      to: ['javicaraballo1@gmail.com'],
       subject: `Nueva Reserva Backpacker - ${fullName}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
