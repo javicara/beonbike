@@ -7,8 +7,8 @@ import { es } from 'date-fns/locale';
 interface Rental {
   id: string;
   fullName: string;
-  startDate: string;
-  endDate: string;
+  startDate: Date | string;
+  endDate: Date | string;
 }
 
 interface Bike {
@@ -18,7 +18,7 @@ interface Bike {
   status: string;
   salePrice: number | null;
   notes: string | null;
-  createdAt: string;
+  createdAt: Date | string;
   rentals: Rental[];
 }
 

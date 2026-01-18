@@ -7,7 +7,7 @@ import { es } from 'date-fns/locale';
 interface Payment {
   id: string;
   amount: number;
-  date: string;
+  date: Date | string;
   type: string;
   method: string;
   notes: string | null;
@@ -22,8 +22,8 @@ interface Bike {
 interface Booking {
   id: string;
   bikeType: string;
-  startDate: string;
-  endDate: string;
+  startDate: Date | string;
+  endDate: Date | string;
   weeks: number;
   fullName: string;
   documentId: string;
@@ -40,7 +40,7 @@ interface Booking {
   bondAmount: number;
   bondStatus: string;
   createdBy: string;
-  createdAt: string;
+  createdAt: Date | string;
   payments: Payment[];
 }
 
