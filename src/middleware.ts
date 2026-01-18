@@ -3,11 +3,10 @@ import { NextRequest, NextResponse } from "next/server";
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Solo proteger rutas de admin (excepto login y setup)
+  // Solo proteger rutas de admin (excepto login)
   if (
     pathname.startsWith("/admin") &&
-    !pathname.startsWith("/admin/login") &&
-    !pathname.startsWith("/admin/setup")
+    !pathname.startsWith("/admin/login")
   ) {
     // Verificar si hay cookie de sesión
     const sessionCookie = request.cookies.get("better-auth.session_token");
