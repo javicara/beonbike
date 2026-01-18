@@ -12,6 +12,24 @@ async function getBookings() {
       },
     },
     orderBy: { startDate: "asc" },
+    include: {
+      bike: true,
+      payments: true,
+    },
+  });
+}
+
+async function getBikes() {
+  return prisma.bike.findMany({
+    where: { type: 'rental' },
+    orderBy: { name: 'asc' },
+  });
+}
+
+async function getInterested() {
+  return prisma.interestRegistration.findMany({
+    where: { status: 'pending' },
+    orderBy: { createdAt: 'desc' },
   });
 }
 
@@ -24,18 +42,26 @@ export default async function AvailabilityPage() {
     redirect("/admin/login");
   }
 
-  const bookings = await getBookings();
+  const [bookings, bikes, interested] = await Promise.all([
+    getBookings(),
+    getBikes(),
+    getInterested(),
+  ]);
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-white">Disponibilidad</h1>
+        <h1 className="text-3xl font-bold text-white">Calendario</h1>
         <p className="text-slate-400 mt-1">
-          Visualiza el calendario de reservas y disponibilidad
+          Visualiza reservas por bici y disponibilidad
         </p>
       </div>
 
-      <AvailabilityCalendar bookings={bookings} />
+      <AvailabilityCalendar
+        bookings={bookings}
+        bikes={bikes}
+        interested={interested}
+      />
     </div>
   );
 }

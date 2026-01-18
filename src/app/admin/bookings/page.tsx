@@ -7,7 +7,27 @@ import BookingsTable from "@/components/admin/BookingsTable";
 async function getBookings() {
   return prisma.rentalBooking.findMany({
     orderBy: { createdAt: "desc" },
+    include: {
+      bike: true,
+      payments: {
+        orderBy: { date: 'desc' },
+      },
+    },
   });
+}
+
+async function getBikes() {
+  return prisma.bike.findMany({
+    where: { type: 'rental' },
+    orderBy: { name: 'asc' },
+  });
+}
+
+async function getDefaultPrice() {
+  const setting = await prisma.settings.findUnique({
+    where: { key: 'backpacker_weekly' },
+  });
+  return setting?.value ? parseInt(setting.value) : 70;
 }
 
 export default async function BookingsPage() {
@@ -19,7 +39,11 @@ export default async function BookingsPage() {
     redirect("/admin/login");
   }
 
-  const bookings = await getBookings();
+  const [bookings, bikes, defaultPrice] = await Promise.all([
+    getBookings(),
+    getBikes(),
+    getDefaultPrice(),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -30,7 +54,11 @@ export default async function BookingsPage() {
         </p>
       </div>
 
-      <BookingsTable initialBookings={bookings} />
+      <BookingsTable
+        initialBookings={bookings}
+        bikes={bikes}
+        defaultPrice={defaultPrice}
+      />
     </div>
   );
 }

@@ -2,13 +2,14 @@
 
 import * as React from 'react'
 import { useState, useEffect } from 'react'
-import { format, addWeeks, differenceInWeeks, startOfWeek, addDays } from 'date-fns'
+import { format, addWeeks, differenceInWeeks, addDays, getDay, nextFriday, nextSaturday, nextDay } from 'date-fns'
 import { es, enUS } from 'date-fns/locale'
-import { CalendarIcon, Loader2, CheckCircle2 } from 'lucide-react'
+import { CalendarIcon, Loader2, CheckCircle2, Clock, AlertCircle } from 'lucide-react'
 import { Calendar } from '@/components/ui/calendar'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
 import {
   Popover,
   PopoverContent,
@@ -25,6 +26,14 @@ interface BookingFormData {
   hasWhatsapp: boolean
   startDate: Date | undefined
   endDate: Date | undefined
+}
+
+interface InterestFormData {
+  fullName: string
+  email: string
+  phone: string
+  hasWhatsapp: boolean
+  notes: string
 }
 
 interface BackpackerBookingFormProps {
@@ -62,6 +71,18 @@ const t = {
     errorSelectDates: 'Por favor selecciona las fechas de renta',
     errorMinWeeks: `El minimo de renta es ${MINIMUM_WEEKS} semanas`,
     errorGeneric: 'Hubo un error al procesar tu reserva. Intenta nuevamente.',
+    // Interest form translations
+    noAvailability: 'Sin Disponibilidad',
+    noAvailabilityMessage: 'Lo sentimos, no tenemos bicis disponibles para las fechas seleccionadas.',
+    waitlistTitle: 'Unete a la Lista de Espera',
+    waitlistDescription: 'Dejanos tus datos y te contactaremos cuando haya disponibilidad.',
+    notesPlaceholder: 'Alguna nota adicional? (opcional)',
+    joinWaitlist: 'Unirme a la Lista',
+    waitlistSuccess: 'Te agregamos a la lista!',
+    waitlistSuccessMessage: 'Te contactaremos en cuanto tengamos disponibilidad para tus fechas.',
+    checkingAvailability: 'Verificando disponibilidad...',
+    tryOtherDates: 'Probar otras fechas',
+    startDayNote: 'El inicio debe ser Viernes, Sabado o Domingo',
   },
   en: {
     fullName: 'Full Name',
@@ -90,7 +111,35 @@ const t = {
     errorSelectDates: 'Please select rental dates',
     errorMinWeeks: `Minimum rental is ${MINIMUM_WEEKS} weeks`,
     errorGeneric: 'There was an error processing your booking. Please try again.',
+    // Interest form translations
+    noAvailability: 'No Availability',
+    noAvailabilityMessage: 'Sorry, we don\'t have bikes available for your selected dates.',
+    waitlistTitle: 'Join the Waiting List',
+    waitlistDescription: 'Leave your details and we\'ll contact you when there\'s availability.',
+    notesPlaceholder: 'Any additional notes? (optional)',
+    joinWaitlist: 'Join Waiting List',
+    waitlistSuccess: 'You\'re on the list!',
+    waitlistSuccessMessage: 'We\'ll contact you as soon as we have availability for your dates.',
+    checkingAvailability: 'Checking availability...',
+    tryOtherDates: 'Try other dates',
+    startDayNote: 'Start must be Friday, Saturday, or Sunday',
   },
+}
+
+// Helper to check if a day is valid start day (Friday, Saturday, Sunday)
+function isValidStartDay(date: Date): boolean {
+  const day = getDay(date)
+  return day === 5 || day === 6 || day === 0 // Friday, Saturday, Sunday
+}
+
+// Helper to get next valid start day from a date
+function getNextValidStartDay(date: Date): Date {
+  const day = getDay(date)
+  if (day === 5) return date // Friday
+  if (day === 6) return date // Saturday
+  if (day === 0) return date // Sunday
+  // Find next Friday
+  return nextFriday(date)
 }
 
 export function BackpackerBookingForm({ lang = 'es' }: BackpackerBookingFormProps) {
@@ -110,9 +159,24 @@ export function BackpackerBookingForm({ lang = 'es' }: BackpackerBookingFormProp
     startDate: undefined,
     endDate: undefined,
   })
+
+  const [interestData, setInterestData] = useState<InterestFormData>({
+    fullName: '',
+    email: '',
+    phone: '',
+    hasWhatsapp: true,
+    notes: '',
+  })
+
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  // Availability states
+  const [isCheckingAvailability, setIsCheckingAvailability] = useState(false)
+  const [isAvailable, setIsAvailable] = useState<boolean | null>(null)
+  const [showInterestForm, setShowInterestForm] = useState(false)
+  const [interestSubmitted, setInterestSubmitted] = useState(false)
 
   // Cargar precios de la base de datos
   useEffect(() => {
@@ -126,6 +190,47 @@ export function BackpackerBookingForm({ lang = 'es' }: BackpackerBookingFormProp
       .catch(() => {})
   }, [])
 
+  // Check availability when dates change
+  useEffect(() => {
+    if (formData.startDate && formData.endDate) {
+      checkAvailability()
+    } else {
+      setIsAvailable(null)
+      setShowInterestForm(false)
+    }
+  }, [formData.startDate, formData.endDate])
+
+  const checkAvailability = async () => {
+    if (!formData.startDate || !formData.endDate) return
+
+    setIsCheckingAvailability(true)
+    try {
+      const response = await fetch(
+        `/api/availability?startDate=${formData.startDate.toISOString()}&endDate=${formData.endDate.toISOString()}`
+      )
+      const data = await response.json()
+      setIsAvailable(data.available)
+      if (!data.available) {
+        setShowInterestForm(true)
+        // Pre-fill interest form with booking form data
+        setInterestData(prev => ({
+          ...prev,
+          fullName: formData.fullName || prev.fullName,
+          email: formData.email || prev.email,
+          phone: formData.phone || prev.phone,
+          hasWhatsapp: formData.hasWhatsapp,
+        }))
+      } else {
+        setShowInterestForm(false)
+      }
+    } catch {
+      // If check fails, assume available
+      setIsAvailable(true)
+    } finally {
+      setIsCheckingAvailability(false)
+    }
+  }
+
   // Calcular semanas seleccionadas
   const weeksSelected = formData.startDate && formData.endDate
     ? Math.max(differenceInWeeks(formData.endDate, formData.startDate), 0)
@@ -133,24 +238,24 @@ export function BackpackerBookingForm({ lang = 'es' }: BackpackerBookingFormProp
 
   const totalPrice = weeksSelected * pricePerWeek
 
-  // Handler para fecha de inicio - siempre empieza un lunes
+  // Handler para fecha de inicio - debe ser viernes, sabado o domingo
   const handleStartDateSelect = (date: Date | undefined) => {
     if (!date) return
 
-    // Ajustar al lunes de esa semana
-    const monday = startOfWeek(date, { weekStartsOn: 1 })
+    // Adjust to next valid start day if needed
+    const validStartDate = isValidStartDay(date) ? date : getNextValidStartDay(date)
 
     // Calcular fecha fin mínima (2 semanas)
-    const minEndDate = addWeeks(monday, MINIMUM_WEEKS)
+    const minEndDate = addWeeks(validStartDate, MINIMUM_WEEKS)
 
     setFormData(prev => ({
       ...prev,
-      startDate: monday,
+      startDate: validStartDate,
       endDate: minEndDate,
     }))
   }
 
-  // Handler para fecha de fin - siempre termina un domingo
+  // Handler para fecha de fin
   const handleEndDateSelect = (date: Date | undefined) => {
     if (!date || !formData.startDate) return
 
@@ -159,9 +264,6 @@ export function BackpackerBookingForm({ lang = 'es' }: BackpackerBookingFormProp
       differenceInWeeks(date, formData.startDate),
       MINIMUM_WEEKS
     )
-
-    // La fecha de fin es el domingo de esa semana
-    const endDate = addDays(addWeeks(formData.startDate, weeksFromStart), -1)
 
     setFormData(prev => ({
       ...prev,
@@ -215,6 +317,52 @@ export function BackpackerBookingForm({ lang = 'es' }: BackpackerBookingFormProp
     }
   }
 
+  const handleInterestSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError(null)
+
+    if (!interestData.fullName || !interestData.email) {
+      setError(texts.errorAllFields)
+      return
+    }
+
+    setIsSubmitting(true)
+
+    try {
+      const response = await fetch('/api/interest', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...interestData,
+          desiredStartDate: formData.startDate?.toISOString(),
+          desiredWeeks: weeksSelected || MINIMUM_WEEKS,
+          lang: lang,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Error al registrar interes')
+      }
+
+      setInterestSubmitted(true)
+    } catch {
+      setError(texts.errorGeneric)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  const resetToDateSelection = () => {
+    setShowInterestForm(false)
+    setFormData(prev => ({
+      ...prev,
+      startDate: undefined,
+      endDate: undefined,
+    }))
+    setIsAvailable(null)
+  }
+
+  // Success state for booking
   if (isSuccess) {
     return (
       <div className="bg-green-50 border border-green-200 rounded-2xl p-8 text-center">
@@ -226,6 +374,147 @@ export function BackpackerBookingForm({ lang = 'es' }: BackpackerBookingFormProp
         <p className="text-sm text-green-600">
           {weeksSelected} {texts.weeks} - ${totalPrice} AUD
         </p>
+      </div>
+    )
+  }
+
+  // Success state for interest registration
+  if (interestSubmitted) {
+    return (
+      <div className="bg-orange-50 border border-orange-200 rounded-2xl p-8 text-center">
+        <Clock className="w-16 h-16 text-orange-500 mx-auto mb-4" />
+        <h3 className="text-2xl font-bold text-orange-800 mb-2">{texts.waitlistSuccess}</h3>
+        <p className="text-orange-700">
+          {texts.waitlistSuccessMessage}
+        </p>
+      </div>
+    )
+  }
+
+  // Interest form when no availability
+  if (showInterestForm && isAvailable === false) {
+    return (
+      <div className="space-y-5">
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
+          <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+          <div>
+            <p className="font-semibold text-amber-800">{texts.noAvailability}</p>
+            <p className="text-sm text-amber-700">{texts.noAvailabilityMessage}</p>
+            {formData.startDate && formData.endDate && (
+              <p className="text-xs text-amber-600 mt-1">
+                {format(formData.startDate, 'dd MMM', { locale: dateLocale })} - {format(formData.endDate, 'dd MMM yyyy', { locale: dateLocale })}
+              </p>
+            )}
+          </div>
+        </div>
+
+        <div className="bg-white border border-slate-200 rounded-xl p-5">
+          <h3 className="font-bold text-slate-800 mb-1">{texts.waitlistTitle}</h3>
+          <p className="text-sm text-slate-500 mb-4">{texts.waitlistDescription}</p>
+
+          <form onSubmit={handleInterestSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="interestName" className="text-sm font-bold text-slate-700">
+                {texts.fullName}
+              </Label>
+              <Input
+                id="interestName"
+                type="text"
+                placeholder={texts.fullNamePlaceholder}
+                value={interestData.fullName}
+                onChange={(e) => setInterestData(prev => ({ ...prev, fullName: e.target.value }))}
+                className="h-12 text-base border-slate-200 focus:border-orange-500 focus:ring-orange-500"
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="interestEmail" className="text-sm font-bold text-slate-700">
+                {texts.email}
+              </Label>
+              <Input
+                id="interestEmail"
+                type="email"
+                placeholder={texts.emailPlaceholder}
+                value={interestData.email}
+                onChange={(e) => setInterestData(prev => ({ ...prev, email: e.target.value }))}
+                className="h-12 text-base border-slate-200 focus:border-orange-500 focus:ring-orange-500"
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="interestPhone" className="text-sm font-bold text-slate-700">
+                {texts.phone}
+              </Label>
+              <Input
+                id="interestPhone"
+                type="tel"
+                placeholder={texts.phonePlaceholder}
+                value={interestData.phone}
+                onChange={(e) => setInterestData(prev => ({ ...prev, phone: e.target.value }))}
+                className="h-12 text-base border-slate-200 focus:border-orange-500 focus:ring-orange-500"
+              />
+            </div>
+
+            <div className="flex items-center gap-3">
+              <input
+                id="interestWhatsapp"
+                type="checkbox"
+                checked={interestData.hasWhatsapp}
+                onChange={(e) => setInterestData(prev => ({ ...prev, hasWhatsapp: e.target.checked }))}
+                className="w-5 h-5 rounded border-slate-300 text-orange-600 focus:ring-orange-500"
+              />
+              <Label htmlFor="interestWhatsapp" className="text-sm font-medium text-slate-600 cursor-pointer">
+                {texts.hasWhatsapp}
+              </Label>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="interestNotes" className="text-sm font-bold text-slate-700">
+                {lang === 'es' ? 'Notas' : 'Notes'}
+              </Label>
+              <Textarea
+                id="interestNotes"
+                placeholder={texts.notesPlaceholder}
+                value={interestData.notes}
+                onChange={(e) => setInterestData(prev => ({ ...prev, notes: e.target.value }))}
+                className="border-slate-200 focus:border-orange-500 focus:ring-orange-500"
+                rows={3}
+              />
+            </div>
+
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-xl p-3 text-sm text-red-700">
+                {error}
+              </div>
+            )}
+
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full h-12 text-base font-bold bg-orange-600 hover:bg-orange-700 text-white rounded-xl"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                  {texts.submitting}
+                </>
+              ) : (
+                texts.joinWaitlist
+              )}
+            </Button>
+
+            <Button
+              type="button"
+              variant="outline"
+              onClick={resetToDateSelection}
+              className="w-full h-10 text-sm"
+            >
+              {texts.tryOtherDates}
+            </Button>
+          </form>
+        </div>
       </div>
     )
   }
@@ -354,9 +643,16 @@ export function BackpackerBookingForm({ lang = 'es' }: BackpackerBookingFormProp
                 mode="single"
                 selected={formData.startDate}
                 onSelect={handleStartDateSelect}
-                disabled={(date) => date < new Date()}
+                disabled={(date) => {
+                  // Disable past dates
+                  if (date < new Date()) return true
+                  // Disable days that are not Friday, Saturday, Sunday
+                  const day = getDay(date)
+                  return day !== 5 && day !== 6 && day !== 0
+                }}
                 initialFocus
               />
+              <p className="text-xs text-slate-500 px-4 pb-3">{texts.startDayNote}</p>
             </PopoverContent>
           </Popover>
         </div>
@@ -399,8 +695,16 @@ export function BackpackerBookingForm({ lang = 'es' }: BackpackerBookingFormProp
         </div>
       </div>
 
+      {/* Availability check indicator */}
+      {isCheckingAvailability && (
+        <div className="flex items-center gap-2 text-slate-500">
+          <Loader2 className="w-4 h-4 animate-spin" />
+          <span className="text-sm">{texts.checkingAvailability}</span>
+        </div>
+      )}
+
       {/* Resumen de semanas */}
-      {weeksSelected > 0 && (
+      {weeksSelected > 0 && isAvailable !== false && (
         <div className="bg-orange-50 border border-orange-200 rounded-xl p-4">
           <div className="flex justify-between items-center">
             <div>
@@ -429,7 +733,7 @@ export function BackpackerBookingForm({ lang = 'es' }: BackpackerBookingFormProp
       {/* Submit Button */}
       <Button
         type="submit"
-        disabled={isSubmitting || weeksSelected < MINIMUM_WEEKS}
+        disabled={isSubmitting || weeksSelected < MINIMUM_WEEKS || isAvailable === false || isCheckingAvailability}
         className="w-full h-14 text-lg font-bold bg-orange-600 hover:bg-orange-700 text-white rounded-xl shadow-lg shadow-orange-200"
       >
         {isSubmitting ? (
