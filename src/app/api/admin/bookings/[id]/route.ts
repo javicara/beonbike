@@ -8,12 +8,12 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    // Verificar autenticación
+    // Verificar autenticación y rol de admin
     const session = await auth.api.getSession({
       headers: await headers(),
     });
 
-    if (!session) {
+    if (!session || session.user.role !== "admin") {
       return NextResponse.json({ error: "No autorizado" }, { status: 401 });
     }
 
@@ -48,12 +48,12 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    // Verificar autenticación
+    // Verificar autenticación y rol de admin
     const session = await auth.api.getSession({
       headers: await headers(),
     });
 
-    if (!session) {
+    if (!session || session.user.role !== "admin") {
       return NextResponse.json({ error: "No autorizado" }, { status: 401 });
     }
 

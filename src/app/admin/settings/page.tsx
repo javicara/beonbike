@@ -7,27 +7,21 @@ import PriceSettings from "@/components/admin/PriceSettings";
 const defaultPrices = [
   {
     key: "backpacker_weekly",
-    label: "Backpacker (Semanal)",
-    description: "Precio por semana para alquiler backpacker",
+    label: "Precio Semanal",
+    description: "Precio actual por semana (se muestra en la página principal)",
     defaultValue: "70",
   },
   {
-    key: "rental_hourly",
-    label: "Alquiler por Hora",
-    description: "Precio por hora de alquiler",
-    defaultValue: "25",
+    key: "backpacker_weekly_original",
+    label: "Precio Original (tachado)",
+    description: "Precio original mostrado tachado en la oferta",
+    defaultValue: "90",
   },
   {
-    key: "rental_daily",
-    label: "Alquiler Diario",
-    description: "Precio por día de alquiler",
-    defaultValue: "60",
-  },
-  {
-    key: "rental_weekly",
-    label: "Alquiler Semanal",
-    description: "Precio por semana de alquiler regular",
-    defaultValue: "210",
+    key: "min_weeks",
+    label: "Mínimo de semanas",
+    description: "Número mínimo de semanas para alquilar",
+    defaultValue: "2",
   },
   {
     key: "bond_weeks",

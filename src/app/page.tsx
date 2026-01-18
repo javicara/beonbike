@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
   Zap,
@@ -30,6 +30,19 @@ import { BackpackerBookingForm } from '@/components/forms/BackpackerBookingForm'
 export default function HomePage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [showBookingModal, setShowBookingModal] = useState(false);
+  const [prices, setPrices] = useState({
+    backpacker_weekly: "70",
+    backpacker_weekly_original: "90",
+    bond_weeks: "2",
+    min_weeks: "2",
+  });
+
+  useEffect(() => {
+    fetch('/api/prices')
+      .then(res => res.json())
+      .then(data => setPrices(data))
+      .catch(() => {});
+  }, []);
 
   const toggleFaq = (index: number) => {
     setOpenFaq(openFaq === index ? null : index);
@@ -106,10 +119,10 @@ export default function HomePage() {
 
               <div className="flex flex-col items-start">
                 <span className="text-slate-400 font-semibold text-lg line-through decoration-red-500 decoration-2">
-                  $90 AUD
+                  ${prices.backpacker_weekly_original} AUD
                 </span>
                 <div className="flex items-baseline gap-1">
-                  <span className="text-6xl font-black text-slate-900 tracking-tighter">$70</span>
+                  <span className="text-6xl font-black text-slate-900 tracking-tighter">${prices.backpacker_weekly}</span>
                   <span className="text-xl font-bold text-slate-500">/sem</span>
                 </div>
                 <p className="text-sm text-slate-400 font-medium mt-1">Dolares Australianos (AUD)</p>
@@ -118,11 +131,11 @@ export default function HomePage() {
               <div className="mt-6 flex flex-wrap gap-2">
                 <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-yellow-100 text-yellow-800 text-sm font-bold border border-yellow-200">
                   <CalendarClock size={16} />
-                  Minimo 2 semanas
+                  Minimo {prices.min_weeks} semanas
                 </div>
                 <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 text-sm font-bold border border-slate-200">
                   <ShieldCheck size={16} />
-                  Bond: 2 semanas
+                  Bond: {prices.bond_weeks} semanas
                 </div>
               </div>
             </div>

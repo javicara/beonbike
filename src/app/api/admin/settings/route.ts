@@ -9,7 +9,7 @@ export async function GET() {
       headers: await headers(),
     });
 
-    if (!session) {
+    if (!session || session.user.role !== "admin") {
       return NextResponse.json({ error: "No autorizado" }, { status: 401 });
     }
 
@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
       headers: await headers(),
     });
 
-    if (!session) {
+    if (!session || session.user.role !== "admin") {
       return NextResponse.json({ error: "No autorizado" }, { status: 401 });
     }
 
