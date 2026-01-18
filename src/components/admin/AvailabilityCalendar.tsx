@@ -26,14 +26,14 @@ interface Bike {
 interface Payment {
   id: string;
   amount: number;
-  date: string;
+  date: Date | string;
 }
 
 interface Booking {
   id: string;
   fullName: string;
-  startDate: string;
-  endDate: string;
+  startDate: Date | string;
+  endDate: Date | string;
   status: string;
   weeks: number;
   bike: Bike | null;
@@ -48,7 +48,7 @@ interface Interest {
   id: string;
   fullName: string;
   email: string;
-  desiredStartDate: string | null;
+  desiredStartDate: Date | string | null;
   desiredWeeks: number | null;
   status: string;
 }
