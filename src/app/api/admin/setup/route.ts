@@ -82,12 +82,26 @@ export async function POST(request: NextRequest) {
 export async function GET() {
   try {
     const existingUsers = await prisma.user.count();
-    return NextResponse.json({ hasAdmin: existingUsers > 0 });
+    console.log("Setup check - user count:", existingUsers);
+
+    return NextResponse.json(
+      { hasAdmin: existingUsers > 0, count: existingUsers },
+      {
+        headers: {
+          "Cache-Control": "no-store, no-cache, must-revalidate",
+        },
+      }
+    );
   } catch (error) {
     console.error("Error checking admin:", error);
     return NextResponse.json(
-      { error: "Error interno del servidor" },
-      { status: 500 }
+      { hasAdmin: false, error: "Error checking database" },
+      {
+        status: 500,
+        headers: {
+          "Cache-Control": "no-store, no-cache, must-revalidate",
+        },
+      }
     );
   }
 }
