@@ -279,19 +279,19 @@ export default function HomePageEN() {
             <div className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4 scrollbar-hide snap-x">
               {[
                 {
-                  name: "Sarah (UK)",
+                  name: "Juan (Chile)",
                   text: "I live in Buderim and was worried about the hills, but the bike handles them all easily. So much power!"
                 },
                 {
-                  name: "Mike (Canada)",
+                  name: "Cami (Argentina)",
                   text: "I work in Noosa. Going up Noosa Dr from Hastings St every day is effortless now. Battery is amazing."
                 },
                 {
-                  name: "Emma (Germany)",
+                  name: "Lucas (Argentina)",
                   text: "The battery lasts forever! I commute to work 3 times a week and still have charge left. Incredible."
                 },
                 {
-                  name: "Tom (Ireland)",
+                  name: "Sofia (Chile)",
                   text: "Without a car here it's tough, buses don't come often and parking is impossible. The e-bike helps so much, I go everywhere!"
                 },
               ].map((review, i) => (
