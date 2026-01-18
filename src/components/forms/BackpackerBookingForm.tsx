@@ -3,7 +3,7 @@
 import * as React from 'react'
 import { useState } from 'react'
 import { format, addWeeks, differenceInWeeks, startOfWeek, addDays } from 'date-fns'
-import { es } from 'date-fns/locale'
+import { es, enUS } from 'date-fns/locale'
 import { CalendarIcon, Loader2, CheckCircle2 } from 'lucide-react'
 import { Calendar } from '@/components/ui/calendar'
 import { Button } from '@/components/ui/button'
@@ -25,10 +25,71 @@ interface BookingFormData {
   endDate: Date | undefined
 }
 
+interface BackpackerBookingFormProps {
+  lang?: 'es' | 'en'
+}
+
 const MINIMUM_WEEKS = 2
 const PRICE_PER_WEEK = 70
 
-export function BackpackerBookingForm() {
+// Translations
+const t = {
+  es: {
+    fullName: 'Nombre Completo',
+    fullNamePlaceholder: 'Juan Perez',
+    documentId: 'DNI / Pasaporte',
+    documentIdPlaceholder: '12345678 o AA123456',
+    address: 'Domicilio en Sunshine Coast',
+    addressPlaceholder: '123 Ocean St, Mooloolaba',
+    email: 'Email',
+    emailPlaceholder: 'tu@email.com',
+    from: 'Desde',
+    to: 'Hasta',
+    choose: 'Elegir',
+    weeksSelected: 'semanas seleccionadas',
+    weekSelected: 'semana seleccionada',
+    submitButton: 'Reservar Ahora',
+    submitting: 'Enviando...',
+    bondNote: 'Bond de 2 semanas requerido al momento de la entrega',
+    successTitle: 'Reserva Recibida!',
+    successMessage: 'Te contactaremos por WhatsApp o email para confirmar tu reserva y coordinar la entrega.',
+    weeks: 'semanas',
+    errorAllFields: 'Por favor completa todos los campos',
+    errorSelectDates: 'Por favor selecciona las fechas de renta',
+    errorMinWeeks: `El minimo de renta es ${MINIMUM_WEEKS} semanas`,
+    errorGeneric: 'Hubo un error al procesar tu reserva. Intenta nuevamente.',
+  },
+  en: {
+    fullName: 'Full Name',
+    fullNamePlaceholder: 'John Smith',
+    documentId: 'ID / Passport',
+    documentIdPlaceholder: '12345678 or AA123456',
+    address: 'Address in Sunshine Coast',
+    addressPlaceholder: '123 Ocean St, Mooloolaba',
+    email: 'Email',
+    emailPlaceholder: 'your@email.com',
+    from: 'From',
+    to: 'To',
+    choose: 'Select',
+    weeksSelected: 'weeks selected',
+    weekSelected: 'week selected',
+    submitButton: 'Book Now',
+    submitting: 'Sending...',
+    bondNote: '2 weeks bond required at delivery',
+    successTitle: 'Booking Received!',
+    successMessage: 'We will contact you via WhatsApp or email to confirm your booking and arrange delivery.',
+    weeks: 'weeks',
+    errorAllFields: 'Please fill in all fields',
+    errorSelectDates: 'Please select rental dates',
+    errorMinWeeks: `Minimum rental is ${MINIMUM_WEEKS} weeks`,
+    errorGeneric: 'There was an error processing your booking. Please try again.',
+  },
+}
+
+export function BackpackerBookingForm({ lang = 'es' }: BackpackerBookingFormProps) {
+  const texts = t[lang]
+  const dateLocale = lang === 'es' ? es : enUS
+
   const [formData, setFormData] = useState<BookingFormData>({
     fullName: '',
     documentId: '',
@@ -90,17 +151,17 @@ export function BackpackerBookingForm() {
 
     // Validaciones
     if (!formData.fullName || !formData.documentId || !formData.address || !formData.email) {
-      setError('Por favor completa todos los campos')
+      setError(texts.errorAllFields)
       return
     }
 
     if (!formData.startDate || !formData.endDate) {
-      setError('Por favor selecciona las fechas de renta')
+      setError(texts.errorSelectDates)
       return
     }
 
     if (weeksSelected < MINIMUM_WEEKS) {
-      setError(`El minimo de renta es ${MINIMUM_WEEKS} semanas`)
+      setError(texts.errorMinWeeks)
       return
     }
 
@@ -114,6 +175,7 @@ export function BackpackerBookingForm() {
           ...formData,
           weeks: weeksSelected,
           bikeType: 'backpacker',
+          lang: lang,
         }),
       })
 
@@ -123,7 +185,7 @@ export function BackpackerBookingForm() {
 
       setIsSuccess(true)
     } catch {
-      setError('Hubo un error al procesar tu reserva. Intenta nuevamente.')
+      setError(texts.errorGeneric)
     } finally {
       setIsSubmitting(false)
     }
@@ -133,12 +195,12 @@ export function BackpackerBookingForm() {
     return (
       <div className="bg-green-50 border border-green-200 rounded-2xl p-8 text-center">
         <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto mb-4" />
-        <h3 className="text-2xl font-bold text-green-800 mb-2">Reserva Recibida!</h3>
+        <h3 className="text-2xl font-bold text-green-800 mb-2">{texts.successTitle}</h3>
         <p className="text-green-700 mb-4">
-          Te contactaremos por WhatsApp o email para confirmar tu reserva y coordinar la entrega.
+          {texts.successMessage}
         </p>
         <p className="text-sm text-green-600">
-          {weeksSelected} semanas - ${totalPrice} AUD
+          {weeksSelected} {texts.weeks} - ${totalPrice} AUD
         </p>
       </div>
     )
@@ -149,12 +211,12 @@ export function BackpackerBookingForm() {
       {/* Nombre Completo */}
       <div className="space-y-2">
         <Label htmlFor="fullName" className="text-sm font-bold text-slate-700">
-          Nombre Completo
+          {texts.fullName}
         </Label>
         <Input
           id="fullName"
           type="text"
-          placeholder="Juan Perez"
+          placeholder={texts.fullNamePlaceholder}
           value={formData.fullName}
           onChange={(e) => setFormData(prev => ({ ...prev, fullName: e.target.value }))}
           className="h-12 text-base border-slate-200 focus:border-orange-500 focus:ring-orange-500"
@@ -165,12 +227,12 @@ export function BackpackerBookingForm() {
       {/* DNI / Pasaporte */}
       <div className="space-y-2">
         <Label htmlFor="documentId" className="text-sm font-bold text-slate-700">
-          DNI / Pasaporte
+          {texts.documentId}
         </Label>
         <Input
           id="documentId"
           type="text"
-          placeholder="12345678 o AA123456"
+          placeholder={texts.documentIdPlaceholder}
           value={formData.documentId}
           onChange={(e) => setFormData(prev => ({ ...prev, documentId: e.target.value }))}
           className="h-12 text-base border-slate-200 focus:border-orange-500 focus:ring-orange-500"
@@ -181,12 +243,12 @@ export function BackpackerBookingForm() {
       {/* Domicilio */}
       <div className="space-y-2">
         <Label htmlFor="address" className="text-sm font-bold text-slate-700">
-          Domicilio en Sunshine Coast
+          {texts.address}
         </Label>
         <Input
           id="address"
           type="text"
-          placeholder="123 Ocean St, Mooloolaba"
+          placeholder={texts.addressPlaceholder}
           value={formData.address}
           onChange={(e) => setFormData(prev => ({ ...prev, address: e.target.value }))}
           className="h-12 text-base border-slate-200 focus:border-orange-500 focus:ring-orange-500"
@@ -197,12 +259,12 @@ export function BackpackerBookingForm() {
       {/* Email */}
       <div className="space-y-2">
         <Label htmlFor="email" className="text-sm font-bold text-slate-700">
-          Email
+          {texts.email}
         </Label>
         <Input
           id="email"
           type="email"
-          placeholder="tu@email.com"
+          placeholder={texts.emailPlaceholder}
           value={formData.email}
           onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
           className="h-12 text-base border-slate-200 focus:border-orange-500 focus:ring-orange-500"
@@ -214,7 +276,7 @@ export function BackpackerBookingForm() {
       <div className="grid grid-cols-2 gap-4">
         {/* Fecha Inicio */}
         <div className="space-y-2">
-          <Label className="text-sm font-bold text-slate-700">Desde</Label>
+          <Label className="text-sm font-bold text-slate-700">{texts.from}</Label>
           <Popover>
             <PopoverTrigger asChild>
               <Button
@@ -227,9 +289,9 @@ export function BackpackerBookingForm() {
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
                 {formData.startDate ? (
-                  format(formData.startDate, 'dd MMM', { locale: es })
+                  format(formData.startDate, 'dd MMM', { locale: dateLocale })
                 ) : (
-                  <span>Elegir</span>
+                  <span>{texts.choose}</span>
                 )}
               </Button>
             </PopoverTrigger>
@@ -247,7 +309,7 @@ export function BackpackerBookingForm() {
 
         {/* Fecha Fin */}
         <div className="space-y-2">
-          <Label className="text-sm font-bold text-slate-700">Hasta</Label>
+          <Label className="text-sm font-bold text-slate-700">{texts.to}</Label>
           <Popover>
             <PopoverTrigger asChild>
               <Button
@@ -261,9 +323,9 @@ export function BackpackerBookingForm() {
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
                 {formData.endDate ? (
-                  format(formData.endDate, 'dd MMM', { locale: es })
+                  format(formData.endDate, 'dd MMM', { locale: dateLocale })
                 ) : (
-                  <span>Elegir</span>
+                  <span>{texts.choose}</span>
                 )}
               </Button>
             </PopoverTrigger>
@@ -289,10 +351,10 @@ export function BackpackerBookingForm() {
           <div className="flex justify-between items-center">
             <div>
               <p className="text-sm font-medium text-orange-800">
-                {weeksSelected} {weeksSelected === 1 ? 'semana' : 'semanas'} seleccionadas
+                {weeksSelected} {weeksSelected === 1 ? texts.weekSelected : texts.weeksSelected}
               </p>
               <p className="text-xs text-orange-600">
-                {formData.startDate && format(formData.startDate, 'dd MMM', { locale: es })} - {formData.endDate && format(formData.endDate, 'dd MMM yyyy', { locale: es })}
+                {formData.startDate && format(formData.startDate, 'dd MMM', { locale: dateLocale })} - {formData.endDate && format(formData.endDate, 'dd MMM yyyy', { locale: dateLocale })}
               </p>
             </div>
             <div className="text-right">
@@ -319,15 +381,15 @@ export function BackpackerBookingForm() {
         {isSubmitting ? (
           <>
             <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-            Enviando...
+            {texts.submitting}
           </>
         ) : (
-          'Reservar Ahora'
+          texts.submitButton
         )}
       </Button>
 
       <p className="text-xs text-center text-slate-400">
-        Bond de 2 semanas requerido al momento de la entrega
+        {texts.bondNote}
       </p>
     </form>
   )
