@@ -31,8 +31,8 @@ export default function HomePage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [prices, setPrices] = useState({
-    backpacker_weekly: "70",
-    backpacker_weekly_original: "90",
+    backpacker_weekly: "85",
+    backpacker_weekly_original: "120",
     bond_weeks: "2",
     min_weeks: "2",
   });

@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
 
-    const { fullName, documentId, address, email, startDate, endDate, weeks, bikeType, lang = 'es' } = body
+    const { fullName, documentId, address, email, phone, hasWhatsapp, startDate, endDate, weeks, bikeType, lang = 'es' } = body
 
     // Validaciones básicas
     if (!fullName || !documentId || !address || !email || !startDate || !endDate || !weeks) {
@@ -84,6 +84,10 @@ export async function POST(request: NextRequest) {
               <tr>
                 <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; font-weight: bold; color: #64748b;">Email:</td>
                 <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; color: #1e293b;"><a href="mailto:${email}">${email}</a></td>
+              </tr>
+              <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; font-weight: bold; color: #64748b;">Telefono:</td>
+                <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; color: #1e293b;">${phone} ${hasWhatsapp ? '(WhatsApp)' : ''}</td>
               </tr>
               <tr>
                 <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; font-weight: bold; color: #64748b;">Idioma:</td>
