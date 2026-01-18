@@ -22,11 +22,15 @@ export default function AdminSetupPage() {
       const response = await fetch("/api/admin/setup");
       const data = await response.json();
 
-      if (data.hasAdmin) {
+      console.log("Setup check response:", data);
+
+      // Solo redirigir si explícitamente hay admin
+      if (data.hasAdmin === true) {
         router.push("/admin/login");
       }
-    } catch {
-      console.error("Error checking admin");
+    } catch (err) {
+      console.error("Error checking admin:", err);
+      // Si hay error, mostrar el formulario de todas formas
     } finally {
       setChecking(false);
     }
