@@ -91,6 +91,23 @@ model Settings {
 // Business Models
 // ==========================================
 
+// Inventario de bicicletas
+model Bike {
+  id          String   @id @default(cuid())
+  name        String   // ej: "Scott 750w", "Giant 750w"
+  type        String   @default("rental") // rental, sale
+  status      String   @default("available") // available, rented, sold, maintenance
+  salePrice   Float?   // precio de venta (solo si type=sale)
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relaciones
+  rentals     RentalBooking[]
+
+  @@map("bikes")
+}
+
 // Contactos del formulario de contacto
 model Contact {
   id        String   @id @default(cuid())
@@ -133,12 +150,57 @@ model RentalBooking {
   address     String   // domicilio
   email       String
   phone       String?
+  hasWhatsapp Boolean  @default(false)
   notes       String?
   status      String   @default("pending") // pending, confirmed, cancelled
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+  // Nuevos campos para gestión
+  bikeId          String?  // bici asignada (nullable hasta confirmar)
+  bike            Bike?    @relation(fields: [bikeId], references: [id])
+  agreedPrice     Float?   // precio semanal acordado (puede diferir del default)
+  contractStatus  String   @default("unsigned") // unsigned, signed
+  bondAmount      Float    @default(140) // monto del bond
+  bondStatus      String   @default("not_paid") // not_paid, paid, returned
+  createdBy       String   @default("form") // form, admin
+
+  // Relaciones
+  payments        Payment[]
+
   @@map("rental_bookings")
+}
+
+// Pagos de alquiler (revenue real, no incluye bond)
+model Payment {
+  id          String   @id @default(cuid())
+  bookingId   String
+  booking     RentalBooking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  amount      Float
+  date        DateTime @default(now())
+  type        String   @default("weekly") // weekly, advance, other
+  method      String   @default("cash") // cash, transfer
+  notes       String?
+  createdAt   DateTime @default(now())
+
+  @@map("payments")
+}
+
+// Registro de interesados (lista de espera)
+model InterestRegistration {
+  id              String   @id @default(cuid())
+  fullName        String
+  email           String
+  phone           String?
+  hasWhatsapp     Boolean  @default(false)
+  desiredStartDate DateTime?
+  desiredWeeks    Int?
+  notes           String?
+  status          String   @default("pending") // pending, contacted, converted
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("interest_registrations")
 }
 
 // Solicitudes de conversión
