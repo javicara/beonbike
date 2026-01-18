@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
 
-    const { fullName, documentId, address, email, startDate, endDate, weeks, bikeType } = body
+    const { fullName, documentId, address, email, phone, hasWhatsapp, startDate, endDate, weeks, bikeType, lang = 'es' } = body
 
     // Validaciones básicas
     if (!fullName || !documentId || !address || !email || !startDate || !endDate || !weeks) {
@@ -41,9 +41,10 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    // Formatear fechas para el email
+    // Formatear fechas para el email según el idioma
     const formatDate = (date: string) => {
-      return new Date(date).toLocaleDateString('es-ES', {
+      const locale = lang === 'en' ? 'en-US' : 'es-ES'
+      return new Date(date).toLocaleDateString(locale, {
         weekday: 'long',
         year: 'numeric',
         month: 'long',
@@ -53,10 +54,10 @@ export async function POST(request: NextRequest) {
 
     const totalPrice = weeks * 70
 
-    // Enviar email de notificación al negocio
+    // Enviar email de notificación al negocio (siempre en español)
     await resend.emails.send({
       from: 'Be On Bikes <reservas@beonbikes.com>',
-      to: ['info@beonbikes.com'],
+      to: ['javicaraballo1@gmail.com'],
       subject: `Nueva Reserva Backpacker - ${fullName}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -83,6 +84,14 @@ export async function POST(request: NextRequest) {
               <tr>
                 <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; font-weight: bold; color: #64748b;">Email:</td>
                 <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; color: #1e293b;"><a href="mailto:${email}">${email}</a></td>
+              </tr>
+              <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; font-weight: bold; color: #64748b;">Telefono:</td>
+                <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; color: #1e293b;">${phone} ${hasWhatsapp ? '(WhatsApp)' : ''}</td>
+              </tr>
+              <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; font-weight: bold; color: #64748b;">Idioma:</td>
+                <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; color: #1e293b;">${lang === 'en' ? 'Ingles' : 'Espanol'}</td>
               </tr>
             </table>
 
@@ -121,12 +130,49 @@ export async function POST(request: NextRequest) {
       `,
     })
 
-    // Enviar email de confirmación al cliente
-    await resend.emails.send({
-      from: 'Be On Bikes <reservas@beonbikes.com>',
-      to: [email],
-      subject: 'Confirmación de Reserva - Be On Bikes',
-      html: `
+    // Enviar email de confirmación al cliente (en el idioma seleccionado)
+    const clientEmailHtml = lang === 'en'
+      ? `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: linear-gradient(135deg, #ea580c, #f59e0b); padding: 20px; text-align: center;">
+            <h1 style="color: white; margin: 0;">Thank you for your booking!</h1>
+          </div>
+
+          <div style="padding: 30px; background: #f8fafc;">
+            <p style="color: #1e293b; font-size: 16px;">Hi <strong>${fullName}</strong>,</p>
+
+            <p style="color: #64748b; line-height: 1.6;">
+              We have received your E-Bike booking. We will contact you soon via WhatsApp or email to confirm the details and arrange delivery.
+            </p>
+
+            <div style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; margin: 20px 0;">
+              <h3 style="color: #1e293b; margin-top: 0;">Booking Summary</h3>
+              <p style="color: #64748b; margin: 5px 0;"><strong>From:</strong> ${formatDate(startDate)}</p>
+              <p style="color: #64748b; margin: 5px 0;"><strong>To:</strong> ${formatDate(endDate)}</p>
+              <p style="color: #64748b; margin: 5px 0;"><strong>Duration:</strong> ${weeks} weeks</p>
+              <p style="color: #ea580c; margin: 5px 0; font-size: 20px;"><strong>Total: $${totalPrice} AUD</strong></p>
+            </div>
+
+            <div style="background: #fef3c7; padding: 15px; border-radius: 8px;">
+              <p style="color: #92400e; margin: 0; font-size: 14px;">
+                <strong>Remember:</strong> At delivery, you will need a bond of $${70 * 2} AUD (2 weeks) which will be returned at the end of the rental.
+              </p>
+            </div>
+
+            <p style="color: #64748b; margin-top: 20px; line-height: 1.6;">
+              If you have any questions, contact us via WhatsApp at <strong>0403 460 777</strong>.
+            </p>
+          </div>
+
+          <div style="padding: 20px; background: #1e293b; text-align: center;">
+            <p style="color: white; margin: 0 0 10px 0; font-weight: bold;">Be On Bikes</p>
+            <p style="color: #94a3b8; margin: 0; font-size: 12px;">
+              Sunshine Coast, QLD | info@beonbikes.com
+            </p>
+          </div>
+        </div>
+      `
+      : `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: linear-gradient(135deg, #ea580c, #f59e0b); padding: 20px; text-align: center;">
             <h1 style="color: white; margin: 0;">¡Gracias por tu reserva!</h1>
@@ -165,7 +211,13 @@ export async function POST(request: NextRequest) {
             </p>
           </div>
         </div>
-      `,
+      `
+
+    await resend.emails.send({
+      from: 'Be On Bikes <reservas@beonbikes.com>',
+      to: [email],
+      subject: lang === 'en' ? 'Booking Confirmation - Be On Bikes' : 'Confirmación de Reserva - Be On Bikes',
+      html: clientEmailHtml,
     })
 
     return NextResponse.json(
