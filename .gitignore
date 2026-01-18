@@ -96,7 +96,6 @@ node_modules/
 # OS specific
 # Task files
 tasks.json
-tasks/ 
-CLAUDE.md
+tasks/
 
 /src/generated/prisma
