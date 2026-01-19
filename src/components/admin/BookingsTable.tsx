@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { format, differenceInWeeks, addWeeks } from 'date-fns';
 import { es } from 'date-fns/locale';
 
@@ -91,6 +91,18 @@ export default function BookingsTable({ initialBookings, bikes, defaultPrice }: 
     method: 'cash',
     notes: '',
   });
+
+  // Local state for editable inputs (to avoid API calls on every keystroke)
+  const [editPrice, setEditPrice] = useState('');
+  const [editBond, setEditBond] = useState('');
+
+  // Sync local state when selectedBooking changes
+  useEffect(() => {
+    if (selectedBooking) {
+      setEditPrice((selectedBooking.agreedPrice || defaultPrice).toString());
+      setEditBond(selectedBooking.bondAmount.toString());
+    }
+  }, [selectedBooking?.id, selectedBooking?.agreedPrice, selectedBooking?.bondAmount, defaultPrice]);
 
   const filteredBookings = bookings.filter((booking) => {
     const matchesFilter = filter === 'all' || booking.status === filter;
@@ -458,8 +470,14 @@ export default function BookingsTable({ initialBookings, bikes, defaultPrice }: 
                   <label className="block text-white font-medium mb-2">Precio Semanal ($AUD)</label>
                   <input
                     type="number"
-                    value={selectedBooking.agreedPrice || defaultPrice}
-                    onChange={(e) => updateBooking(selectedBooking.id, { agreedPrice: e.target.value })}
+                    value={editPrice}
+                    onChange={(e) => setEditPrice(e.target.value)}
+                    onBlur={() => {
+                      const newPrice = parseFloat(editPrice);
+                      if (!isNaN(newPrice) && newPrice !== selectedBooking.agreedPrice) {
+                        updateBooking(selectedBooking.id, { agreedPrice: newPrice });
+                      }
+                    }}
                     className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
                   />
                 </div>
@@ -486,8 +504,14 @@ export default function BookingsTable({ initialBookings, bikes, defaultPrice }: 
                   <label className="block text-white font-medium mb-2">Bond ($AUD)</label>
                   <input
                     type="number"
-                    value={selectedBooking.bondAmount}
-                    onChange={(e) => updateBooking(selectedBooking.id, { bondAmount: e.target.value })}
+                    value={editBond}
+                    onChange={(e) => setEditBond(e.target.value)}
+                    onBlur={() => {
+                      const newBond = parseFloat(editBond);
+                      if (!isNaN(newBond) && newBond !== selectedBooking.bondAmount) {
+                        updateBooking(selectedBooking.id, { bondAmount: newBond });
+                      }
+                    }}
                     className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
                   />
                 </div>
@@ -576,7 +600,7 @@ export default function BookingsTable({ initialBookings, bikes, defaultPrice }: 
                   </div>
                 </div>
                 <div className="text-sm text-slate-400">
-                  Total: <span className="text-white font-medium">{selectedBooking.weeks} semanas × ${selectedBooking.agreedPrice || defaultPrice} = ${selectedBooking.weeks * (selectedBooking.agreedPrice || defaultPrice)} AUD</span>
+                  Total: <span className="text-white font-medium">{selectedBooking.weeks} semanas × ${editPrice || defaultPrice} = ${selectedBooking.weeks * (parseFloat(editPrice) || defaultPrice)} AUD</span>
                 </div>
               </div>
 
