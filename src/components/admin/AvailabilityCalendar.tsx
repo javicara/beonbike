@@ -171,7 +171,7 @@ export default function AvailabilityCalendar({
                   </span>
                 </div>
                 {activeBooking && (
-                  <Link href="/admin/bookings" className="mt-2 block text-sm">
+                  <Link href={`/admin/bookings?selected=${activeBooking.id}`} className="mt-2 block text-sm">
                     <span className="text-slate-400">Cliente: </span>
                     <span className="text-white">{activeBooking.fullName}</span>
                     <span className="text-slate-500 block text-xs">
@@ -223,7 +223,7 @@ export default function AvailabilityCalendar({
                         <td key={week.toISOString()} className="py-3 px-1">
                           {booking ? (
                             <Link
-                              href="/admin/bookings"
+                              href={`/admin/bookings?selected=${booking.id}`}
                               className={`block text-center text-xs py-1 rounded ${
                                 booking.status === 'confirmed'
                                   ? 'bg-green-500/20 text-green-400 hover:bg-green-500/30'
@@ -369,7 +369,7 @@ export default function AvailabilityCalendar({
             filteredBookings.map((booking) => (
               <Link
                 key={booking.id}
-                href="/admin/bookings"
+                href={`/admin/bookings?selected=${booking.id}`}
                 className="flex items-start sm:items-center gap-3 sm:gap-4 p-3 rounded-lg border border-slate-700 hover:bg-slate-700/30 active:bg-slate-700/50 transition-colors"
               >
                 <div className={`w-3 h-3 rounded-full flex-shrink-0 mt-1 sm:mt-0 ${getBikeColor(booking.bike?.name)}`}></div>

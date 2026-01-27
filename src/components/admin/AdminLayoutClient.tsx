@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import AdminSidebar from './AdminSidebar';
+import LanguageBubble from './LanguageBubble';
 
 interface User {
   id: string;
@@ -63,6 +64,9 @@ export default function AdminLayoutClient({ user, children }: AdminLayoutClientP
           {children}
         </div>
       </main>
+
+      {/* Language bubble */}
+      <LanguageBubble />
     </div>
   );
 }

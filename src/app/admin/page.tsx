@@ -282,7 +282,7 @@ export default async function AdminDashboard() {
               const totalPaid = booking.payments.reduce((s, p) => s + p.amount, 0);
               const totalExpected = booking.weeks * (booking.agreedPrice || stats.defaultPrice);
               return (
-                <Link key={booking.id} href="/admin/bookings" className="block p-4 hover:bg-slate-700/30 active:bg-slate-700/50">
+                <Link key={booking.id} href={`/admin/bookings?selected=${booking.id}`} className="block p-4 hover:bg-slate-700/30 active:bg-slate-700/50">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
                       <p className="text-white font-medium truncate">{booking.fullName}</p>
@@ -349,10 +349,12 @@ export default async function AdminDashboard() {
                   const totalPaid = booking.payments.reduce((s, p) => s + p.amount, 0);
                   const totalExpected = booking.weeks * (booking.agreedPrice || stats.defaultPrice);
                   return (
-                    <tr key={booking.id} className="hover:bg-slate-700/30">
+                    <tr key={booking.id} className="hover:bg-slate-700/30 group">
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <p className="text-white font-medium">{booking.fullName}</p>
-                        <p className="text-slate-400 text-sm">{booking.email}</p>
+                        <Link href={`/admin/bookings?selected=${booking.id}`} className="block">
+                          <p className="text-white font-medium group-hover:text-orange-400 transition-colors">{booking.fullName}</p>
+                          <p className="text-slate-400 text-sm">{booking.email}</p>
+                        </Link>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-slate-300">
                         {booking.bike?.name || 'Sin asignar'}
@@ -367,15 +369,17 @@ export default async function AdminDashboard() {
                         <span className="text-slate-500">/${totalExpected}</span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                          booking.status === "confirmed"
-                            ? "bg-green-500/10 text-green-500"
-                            : booking.status === "cancelled"
-                            ? "bg-red-500/10 text-red-500"
-                            : "bg-amber-500/10 text-amber-500"
-                        }`}>
-                          {booking.status === "confirmed" ? "Confirmada" : booking.status === "cancelled" ? "Cancelada" : "Pendiente"}
-                        </span>
+                        <Link href={`/admin/bookings?selected=${booking.id}`}>
+                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                            booking.status === "confirmed"
+                              ? "bg-green-500/10 text-green-500"
+                              : booking.status === "cancelled"
+                              ? "bg-red-500/10 text-red-500"
+                              : "bg-amber-500/10 text-amber-500"
+                          }`}>
+                            {booking.status === "confirmed" ? "Confirmada" : booking.status === "cancelled" ? "Cancelada" : "Pendiente"}
+                          </span>
+                        </Link>
                       </td>
                     </tr>
                   );

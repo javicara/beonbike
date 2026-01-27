@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { format, differenceInWeeks, addWeeks } from 'date-fns';
 import { es } from 'date-fns/locale';
 
@@ -58,12 +59,35 @@ const statusOptions = [
 ];
 
 export default function BookingsTable({ initialBookings, bikes, defaultPrice }: BookingsTableProps) {
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const [bookings, setBookings] = useState<Booking[]>(initialBookings);
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [showNewForm, setShowNewForm] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  // Auto-select booking from URL query param
+  useEffect(() => {
+    const selectedId = searchParams.get('selected');
+    if (selectedId && !selectedBooking) {
+      const booking = bookings.find((b) => b.id === selectedId);
+      if (booking) {
+        setSelectedBooking(booking);
+      }
+    }
+  }, [searchParams, bookings, selectedBooking]);
+
+  // Update URL when selecting/deselecting a booking
+  const handleSelectBooking = (booking: Booking | null) => {
+    setSelectedBooking(booking);
+    if (booking) {
+      router.replace(`/admin/bookings?selected=${booking.id}`, { scroll: false });
+    } else {
+      router.replace('/admin/bookings', { scroll: false });
+    }
+  };
 
   // New booking form state
   const [newBooking, setNewBooking] = useState({
@@ -354,7 +378,7 @@ export default function BookingsTable({ initialBookings, bikes, defaultPrice }: 
               return (
                 <div
                   key={booking.id}
-                  onClick={() => setSelectedBooking(booking)}
+                  onClick={() => handleSelectBooking(booking)}
                   className="p-4 hover:bg-slate-700/30 cursor-pointer flex flex-col sm:flex-row sm:items-center gap-4"
                 >
                   <div className="flex-1 min-w-0">
@@ -428,7 +452,7 @@ export default function BookingsTable({ initialBookings, bikes, defaultPrice }: 
                 <p className="text-slate-400 text-xs sm:text-sm truncate">{selectedBooking.email}</p>
                 <p className="text-slate-400 text-xs sm:text-sm">{selectedBooking.phone || 'Sin teléfono'}</p>
               </div>
-              <button onClick={() => setSelectedBooking(null)} className="text-slate-400 hover:text-white p-1 -mr-1 flex-shrink-0">
+              <button onClick={() => handleSelectBooking(null)} className="text-slate-400 hover:text-white p-1 -mr-1 flex-shrink-0">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
