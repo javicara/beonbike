@@ -118,74 +118,74 @@ export default async function AdminDashboard() {
   const stats = await getStats();
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       <div>
-        <h1 className="text-3xl font-bold text-white">Dashboard</h1>
-        <p className="text-slate-400 mt-1">
+        <h1 className="text-2xl sm:text-3xl font-bold text-white">Dashboard</h1>
+        <p className="text-slate-400 mt-1 text-sm sm:text-base">
           Bienvenido de vuelta, {session.user.name}
         </p>
       </div>
 
       {/* Revenue Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+        <div className="bg-slate-800 rounded-xl p-4 sm:p-6 border border-slate-700">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-slate-400 text-sm">Revenue Esta Semana</p>
-              <p className="text-3xl font-bold text-green-500 mt-1">
+            <div className="min-w-0">
+              <p className="text-slate-400 text-xs sm:text-sm truncate">Revenue Semana</p>
+              <p className="text-xl sm:text-3xl font-bold text-green-500 mt-1">
                 ${stats.weeklyRevenue}
               </p>
             </div>
-            <div className="w-12 h-12 bg-green-500/10 rounded-lg flex items-center justify-center">
-              <svg className="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-green-500/10 rounded-lg flex items-center justify-center flex-shrink-0">
+              <svg className="w-5 h-5 sm:w-6 sm:h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
           </div>
         </div>
 
-        <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+        <div className="bg-slate-800 rounded-xl p-4 sm:p-6 border border-slate-700">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-slate-400 text-sm">Deuda Pendiente</p>
-              <p className="text-3xl font-bold text-red-400 mt-1">
+            <div className="min-w-0">
+              <p className="text-slate-400 text-xs sm:text-sm truncate">Deuda Pendiente</p>
+              <p className="text-xl sm:text-3xl font-bold text-red-400 mt-1">
                 ${stats.totalDebt}
               </p>
             </div>
-            <div className="w-12 h-12 bg-red-500/10 rounded-lg flex items-center justify-center">
-              <svg className="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-red-500/10 rounded-lg flex items-center justify-center flex-shrink-0">
+              <svg className="w-5 h-5 sm:w-6 sm:h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
           </div>
         </div>
 
-        <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+        <div className="bg-slate-800 rounded-xl p-4 sm:p-6 border border-slate-700">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-slate-400 text-sm">Bond en Hold</p>
-              <p className="text-3xl font-bold text-blue-400 mt-1">
+            <div className="min-w-0">
+              <p className="text-slate-400 text-xs sm:text-sm truncate">Bond en Hold</p>
+              <p className="text-xl sm:text-3xl font-bold text-blue-400 mt-1">
                 ${stats.bondHeld}
               </p>
             </div>
-            <div className="w-12 h-12 bg-blue-500/10 rounded-lg flex items-center justify-center">
-              <svg className="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-500/10 rounded-lg flex items-center justify-center flex-shrink-0">
+              <svg className="w-5 h-5 sm:w-6 sm:h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
               </svg>
             </div>
           </div>
         </div>
 
-        <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+        <div className="bg-slate-800 rounded-xl p-4 sm:p-6 border border-slate-700">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-slate-400 text-sm">Revenue Total</p>
-              <p className="text-3xl font-bold text-orange-500 mt-1">
+            <div className="min-w-0">
+              <p className="text-slate-400 text-xs sm:text-sm truncate">Revenue Total</p>
+              <p className="text-xl sm:text-3xl font-bold text-orange-500 mt-1">
                 ${stats.totalRevenue}
               </p>
             </div>
-            <div className="w-12 h-12 bg-orange-500/10 rounded-lg flex items-center justify-center">
-              <svg className="w-6 h-6 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-orange-500/10 rounded-lg flex items-center justify-center flex-shrink-0">
+              <svg className="w-5 h-5 sm:w-6 sm:h-6 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
               </svg>
             </div>
@@ -194,65 +194,65 @@ export default async function AdminDashboard() {
       </div>
 
       {/* Bikes & Bookings Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+        <div className="bg-slate-800 rounded-xl p-4 sm:p-6 border border-slate-700">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-slate-400 text-sm">Bicis Disponibles</p>
-              <p className="text-3xl font-bold text-green-500 mt-1">
+            <div className="min-w-0">
+              <p className="text-slate-400 text-xs sm:text-sm truncate">Bicis Disponibles</p>
+              <p className="text-xl sm:text-3xl font-bold text-green-500 mt-1">
                 {stats.availableBikes}/{stats.totalBikes}
               </p>
             </div>
-            <div className="w-12 h-12 bg-green-500/10 rounded-lg flex items-center justify-center">
-              <svg className="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-green-500/10 rounded-lg flex items-center justify-center flex-shrink-0">
+              <svg className="w-5 h-5 sm:w-6 sm:h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
           </div>
         </div>
 
-        <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+        <div className="bg-slate-800 rounded-xl p-4 sm:p-6 border border-slate-700">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-slate-400 text-sm">Bicis Alquiladas</p>
-              <p className="text-3xl font-bold text-blue-500 mt-1">
+            <div className="min-w-0">
+              <p className="text-slate-400 text-xs sm:text-sm truncate">Bicis Alquiladas</p>
+              <p className="text-xl sm:text-3xl font-bold text-blue-500 mt-1">
                 {stats.rentedBikes}
               </p>
             </div>
-            <div className="w-12 h-12 bg-blue-500/10 rounded-lg flex items-center justify-center">
-              <svg className="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-500/10 rounded-lg flex items-center justify-center flex-shrink-0">
+              <svg className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
             </div>
           </div>
         </div>
 
-        <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+        <div className="bg-slate-800 rounded-xl p-4 sm:p-6 border border-slate-700">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-slate-400 text-sm">Pendientes</p>
-              <p className="text-3xl font-bold text-amber-500 mt-1">
+            <div className="min-w-0">
+              <p className="text-slate-400 text-xs sm:text-sm truncate">Pendientes</p>
+              <p className="text-xl sm:text-3xl font-bold text-amber-500 mt-1">
                 {stats.pendingBookings}
               </p>
             </div>
-            <div className="w-12 h-12 bg-amber-500/10 rounded-lg flex items-center justify-center">
-              <svg className="w-6 h-6 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-amber-500/10 rounded-lg flex items-center justify-center flex-shrink-0">
+              <svg className="w-5 h-5 sm:w-6 sm:h-6 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
           </div>
         </div>
 
-        <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+        <div className="bg-slate-800 rounded-xl p-4 sm:p-6 border border-slate-700">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-slate-400 text-sm">Total Reservas</p>
-              <p className="text-3xl font-bold text-white mt-1">
+            <div className="min-w-0">
+              <p className="text-slate-400 text-xs sm:text-sm truncate">Total Reservas</p>
+              <p className="text-xl sm:text-3xl font-bold text-white mt-1">
                 {stats.totalBookings}
               </p>
             </div>
-            <div className="w-12 h-12 bg-slate-700 rounded-lg flex items-center justify-center">
-              <svg className="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-700 rounded-lg flex items-center justify-center flex-shrink-0">
+              <svg className="w-5 h-5 sm:w-6 sm:h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
               </svg>
             </div>
@@ -262,15 +262,61 @@ export default async function AdminDashboard() {
 
       {/* Recent Bookings */}
       <div className="bg-slate-800 rounded-xl border border-slate-700">
-        <div className="p-6 border-b border-slate-700 flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-white">
+        <div className="p-4 sm:p-6 border-b border-slate-700 flex items-center justify-between">
+          <h2 className="text-lg sm:text-xl font-semibold text-white">
             Reservas Recientes
           </h2>
           <Link href="/admin/bookings" className="text-orange-500 hover:text-orange-400 text-sm font-medium">
             Ver todas
           </Link>
         </div>
-        <div className="overflow-x-auto">
+
+        {/* Mobile: Cards view */}
+        <div className="md:hidden divide-y divide-slate-700">
+          {stats.recentBookings.length === 0 ? (
+            <div className="p-8 text-center text-slate-400">
+              No hay reservas todavía
+            </div>
+          ) : (
+            stats.recentBookings.map((booking) => {
+              const totalPaid = booking.payments.reduce((s, p) => s + p.amount, 0);
+              const totalExpected = booking.weeks * (booking.agreedPrice || stats.defaultPrice);
+              return (
+                <Link key={booking.id} href="/admin/bookings" className="block p-4 hover:bg-slate-700/30 active:bg-slate-700/50">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      <p className="text-white font-medium truncate">{booking.fullName}</p>
+                      <p className="text-slate-400 text-sm truncate">{booking.bike?.name || 'Sin asignar'}</p>
+                    </div>
+                    <span className={`flex-shrink-0 inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                      booking.status === "confirmed"
+                        ? "bg-green-500/10 text-green-500"
+                        : booking.status === "cancelled"
+                        ? "bg-red-500/10 text-red-500"
+                        : "bg-amber-500/10 text-amber-500"
+                    }`}>
+                      {booking.status === "confirmed" ? "Confirmada" : booking.status === "cancelled" ? "Cancelada" : "Pendiente"}
+                    </span>
+                  </div>
+                  <div className="mt-2 flex items-center justify-between text-sm">
+                    <span className="text-slate-400">
+                      {format(new Date(booking.startDate), "dd MMM", { locale: es })} - {format(new Date(booking.endDate), "dd MMM", { locale: es })}
+                    </span>
+                    <span>
+                      <span className={totalPaid >= totalExpected ? 'text-green-500' : 'text-amber-500'}>
+                        ${totalPaid}
+                      </span>
+                      <span className="text-slate-500">/${totalExpected}</span>
+                    </span>
+                  </div>
+                </Link>
+              );
+            })
+          )}
+        </div>
+
+        {/* Desktop: Table view */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full">
             <thead className="bg-slate-700/50">
               <tr>

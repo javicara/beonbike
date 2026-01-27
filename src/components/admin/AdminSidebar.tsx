@@ -14,6 +14,8 @@ interface User {
 
 interface AdminSidebarProps {
   user: User;
+  isOpen?: boolean;
+  onClose?: () => void;
 }
 
 const menuItems = [
@@ -64,7 +66,7 @@ const menuItems = [
   },
 ];
 
-export default function AdminSidebar({ user }: AdminSidebarProps) {
+export default function AdminSidebar({ user, isOpen = false, onClose }: AdminSidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -74,38 +76,66 @@ export default function AdminSidebar({ user }: AdminSidebarProps) {
     router.refresh();
   };
 
+  const handleNavClick = () => {
+    // Close sidebar on mobile when navigating
+    if (onClose) {
+      onClose();
+    }
+  };
+
   return (
-    <aside className="w-64 bg-slate-800 border-r border-slate-700 flex flex-col">
-      <div className="p-6 border-b border-slate-700">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-amber-500 rounded-full flex items-center justify-center">
-            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+    <aside
+      className={`
+        fixed inset-y-0 left-0 z-50 w-64 bg-slate-800 border-r border-slate-700 flex flex-col
+        transform transition-transform duration-300 ease-in-out
+        lg:translate-x-0
+        ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+      `}
+    >
+      {/* Header with close button on mobile */}
+      <div className="p-4 sm:p-6 border-b border-slate-700">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-amber-500 rounded-full flex items-center justify-center flex-shrink-0">
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+            <div className="min-w-0">
+              <h1 className="text-white font-bold truncate">Be On Bikes</h1>
+              <p className="text-slate-400 text-xs">Admin Panel</p>
+            </div>
+          </div>
+          {/* Close button - only on mobile */}
+          <button
+            onClick={onClose}
+            className="lg:hidden p-2 -mr-2 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition-colors"
+            aria-label="Cerrar menú"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
-          </div>
-          <div>
-            <h1 className="text-white font-bold">Be On Bikes</h1>
-            <p className="text-slate-400 text-xs">Admin Panel</p>
-          </div>
+          </button>
         </div>
       </div>
 
-      <nav className="flex-1 p-4">
-        <ul className="space-y-2">
+      <nav className="flex-1 p-3 sm:p-4 overflow-y-auto">
+        <ul className="space-y-1">
           {menuItems.map((item) => {
             const isActive = pathname === item.href;
             return (
               <li key={item.href}>
                 <Link
                   href={item.href}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                  onClick={handleNavClick}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors active:scale-[0.98] ${
                     isActive
                       ? "bg-orange-500/10 text-orange-500"
                       : "text-slate-400 hover:bg-slate-700 hover:text-white"
                   }`}
                 >
                   {item.icon}
-                  {item.name}
+                  <span className="font-medium">{item.name}</span>
                 </Link>
               </li>
             );
@@ -113,9 +143,9 @@ export default function AdminSidebar({ user }: AdminSidebarProps) {
         </ul>
       </nav>
 
-      <div className="p-4 border-t border-slate-700">
-        <div className="flex items-center gap-3 px-4 py-3 mb-2">
-          <div className="w-8 h-8 bg-slate-600 rounded-full flex items-center justify-center">
+      <div className="p-3 sm:p-4 border-t border-slate-700">
+        <div className="flex items-center gap-3 px-3 py-2 mb-2">
+          <div className="w-9 h-9 bg-slate-600 rounded-full flex items-center justify-center flex-shrink-0">
             <span className="text-white text-sm font-medium">
               {user.name?.charAt(0).toUpperCase() || "A"}
             </span>
@@ -127,12 +157,12 @@ export default function AdminSidebar({ user }: AdminSidebarProps) {
         </div>
         <button
           onClick={handleSignOut}
-          className="w-full flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-slate-700 hover:text-white rounded-lg transition-colors"
+          className="w-full flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-slate-700 hover:text-white rounded-lg transition-colors active:scale-[0.98]"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
           </svg>
-          Cerrar Sesión
+          <span className="font-medium">Cerrar Sesión</span>
         </button>
       </div>
     </aside>

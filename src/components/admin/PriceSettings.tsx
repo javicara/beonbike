@@ -74,13 +74,13 @@ export default function PriceSettings({ initialSettings }: PriceSettingsProps) {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
-        <div className="p-6 border-b border-slate-700">
-          <h2 className="text-xl font-semibold text-white">
+        <div className="p-4 sm:p-6 border-b border-slate-700">
+          <h2 className="text-lg sm:text-xl font-semibold text-white">
             Precios de Alquiler
           </h2>
-          <p className="text-slate-400 text-sm mt-1">
+          <p className="text-slate-400 text-xs sm:text-sm mt-1">
             Los precios están en AUD (Dólares Australianos)
           </p>
         </div>
@@ -89,18 +89,18 @@ export default function PriceSettings({ initialSettings }: PriceSettingsProps) {
           {settings.map((setting) => (
             <div
               key={setting.key}
-              className="p-6 flex flex-col sm:flex-row sm:items-center gap-4"
+              className="p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4"
             >
               <div className="flex-1">
-                <label className="block text-white font-medium">
+                <label className="block text-white font-medium text-sm sm:text-base">
                   {setting.label}
                 </label>
-                <p className="text-slate-400 text-sm mt-1">
+                <p className="text-slate-400 text-xs sm:text-sm mt-1">
                   {setting.description}
                 </p>
               </div>
-              <div className="flex items-center gap-3">
-                <div className="relative">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="relative flex-1 sm:flex-none">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
                     $
                   </span>
@@ -108,13 +108,13 @@ export default function PriceSettings({ initialSettings }: PriceSettingsProps) {
                     type="number"
                     value={setting.value}
                     onChange={(e) => handleChange(setting.key, e.target.value)}
-                    className="w-32 pl-7 pr-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white text-right focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full sm:w-32 pl-7 pr-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white text-right focus:outline-none focus:ring-2 focus:ring-orange-500"
                   />
                 </div>
                 <button
                   onClick={() => handleSave(setting)}
                   disabled={saving === setting.key}
-                  className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
+                  className={`px-4 py-2.5 rounded-lg font-medium text-sm transition-colors flex-shrink-0 active:scale-[0.98] ${
                     saved === setting.key
                       ? "bg-green-500/10 text-green-500"
                       : "bg-orange-500/10 text-orange-500 hover:bg-orange-500/20"
@@ -168,14 +168,14 @@ export default function PriceSettings({ initialSettings }: PriceSettingsProps) {
         <button
           onClick={handleSaveAll}
           disabled={saving === "all"}
-          className={`px-6 py-3 rounded-lg font-medium transition-colors ${
+          className={`w-full sm:w-auto px-6 py-3 rounded-lg font-medium transition-colors active:scale-[0.98] ${
             saved === "all"
               ? "bg-green-500 text-white"
               : "bg-gradient-to-r from-orange-500 to-amber-500 text-white hover:from-orange-600 hover:to-amber-600"
           } disabled:opacity-50`}
         >
           {saving === "all" ? (
-            <span className="flex items-center gap-2">
+            <span className="flex items-center justify-center gap-2">
               <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
                 <circle
                   className="opacity-25"
@@ -194,7 +194,7 @@ export default function PriceSettings({ initialSettings }: PriceSettingsProps) {
               Guardando...
             </span>
           ) : saved === "all" ? (
-            <span className="flex items-center gap-2">
+            <span className="flex items-center justify-center gap-2">
               <svg
                 className="w-5 h-5"
                 fill="none"
@@ -211,17 +211,17 @@ export default function PriceSettings({ initialSettings }: PriceSettingsProps) {
               Guardado
             </span>
           ) : (
-            "Guardar Todos los Cambios"
+            "Guardar Todos"
           )}
         </button>
       </div>
 
       {/* Info Box */}
-      <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-6">
-        <div className="flex gap-4">
-          <div className="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+      <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 sm:p-6">
+        <div className="flex gap-3 sm:gap-4">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 bg-blue-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
             <svg
-              className="w-5 h-5 text-blue-400"
+              className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -235,10 +235,10 @@ export default function PriceSettings({ initialSettings }: PriceSettingsProps) {
             </svg>
           </div>
           <div>
-            <h3 className="text-blue-400 font-medium">
+            <h3 className="text-blue-400 font-medium text-sm sm:text-base">
               Sobre los precios dinámicos
             </h3>
-            <p className="text-blue-300/70 text-sm mt-1">
+            <p className="text-blue-300/70 text-xs sm:text-sm mt-1">
               Los cambios en los precios se aplicarán a las nuevas reservas. Las
               reservas existentes mantendrán el precio original. El bond se
               calcula automáticamente multiplicando el precio semanal por el

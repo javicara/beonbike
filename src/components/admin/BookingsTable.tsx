@@ -296,25 +296,38 @@ export default function BookingsTable({ initialBookings, bikes, defaultPrice }: 
   return (
     <div className="space-y-4">
       {/* Filters and Actions */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="relative flex-1">
-          <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-          <input
-            type="text"
-            placeholder="Buscar por nombre, email o bici..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
-          />
+      <div className="space-y-3">
+        {/* Search and New button */}
+        <div className="flex gap-3">
+          <div className="relative flex-1">
+            <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input
+              type="text"
+              placeholder="Buscar..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
+            />
+          </div>
+          <button
+            onClick={() => setShowNewForm(true)}
+            className="px-4 py-2.5 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-lg font-medium hover:from-orange-600 hover:to-amber-600 transition-colors flex items-center gap-2 flex-shrink-0"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+            <span className="hidden sm:inline">Nueva Reserva</span>
+          </button>
         </div>
-        <div className="flex gap-2">
+        {/* Status filters - horizontal scroll on mobile */}
+        <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-hide">
           {statusOptions.map((option) => (
             <button
               key={option.value}
               onClick={() => setFilter(option.value)}
-              className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
+              className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors whitespace-nowrap flex-shrink-0 ${
                 filter === option.value
                   ? 'bg-orange-500 text-white'
                   : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
@@ -324,15 +337,6 @@ export default function BookingsTable({ initialBookings, bikes, defaultPrice }: 
             </button>
           ))}
         </div>
-        <button
-          onClick={() => setShowNewForm(true)}
-          className="px-4 py-2 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-lg font-medium hover:from-orange-600 hover:to-amber-600 transition-colors flex items-center gap-2"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-          </svg>
-          Nueva Reserva
-        </button>
       </div>
 
       {/* Bookings List */}
@@ -416,21 +420,22 @@ export default function BookingsTable({ initialBookings, bikes, defaultPrice }: 
 
       {/* Detail Modal */}
       {selectedBooking && (
-        <div className="fixed inset-0 bg-black/50 flex items-start justify-center z-50 p-4 overflow-y-auto">
-          <div className="bg-slate-800 rounded-xl border border-slate-700 w-full max-w-2xl my-8">
-            <div className="p-6 border-b border-slate-700 flex justify-between items-start">
-              <div>
-                <h2 className="text-xl font-semibold text-white">{selectedBooking.fullName}</h2>
-                <p className="text-slate-400 text-sm">{selectedBooking.email} • {selectedBooking.phone || 'Sin teléfono'}</p>
+        <div className="fixed inset-0 bg-black/50 flex items-start justify-center z-50 p-2 sm:p-4 overflow-y-auto">
+          <div className="bg-slate-800 rounded-xl border border-slate-700 w-full max-w-2xl my-2 sm:my-8">
+            <div className="p-4 sm:p-6 border-b border-slate-700 flex justify-between items-start gap-3">
+              <div className="min-w-0">
+                <h2 className="text-lg sm:text-xl font-semibold text-white truncate">{selectedBooking.fullName}</h2>
+                <p className="text-slate-400 text-xs sm:text-sm truncate">{selectedBooking.email}</p>
+                <p className="text-slate-400 text-xs sm:text-sm">{selectedBooking.phone || 'Sin teléfono'}</p>
               </div>
-              <button onClick={() => setSelectedBooking(null)} className="text-slate-400 hover:text-white">
+              <button onClick={() => setSelectedBooking(null)} className="text-slate-400 hover:text-white p-1 -mr-1 flex-shrink-0">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
 
-            <div className="p-6 space-y-6">
+            <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
               {/* Status & Actions */}
               <div className="flex flex-wrap gap-2">
                 {['pending', 'confirmed', 'cancelled'].map((status) => (
@@ -465,9 +470,9 @@ export default function BookingsTable({ initialBookings, bikes, defaultPrice }: 
               </div>
 
               {/* Price & Contract */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
-                  <label className="block text-white font-medium mb-2">Precio Semanal ($AUD)</label>
+                  <label className="block text-white font-medium mb-2 text-sm sm:text-base">Precio Semanal ($AUD)</label>
                   <input
                     type="number"
                     value={editPrice}
@@ -478,16 +483,16 @@ export default function BookingsTable({ initialBookings, bikes, defaultPrice }: 
                         updateBooking(selectedBooking.id, { agreedPrice: newPrice });
                       }
                     }}
-                    className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-white font-medium mb-2">Contrato</label>
+                  <label className="block text-white font-medium mb-2 text-sm sm:text-base">Contrato</label>
                   <button
                     onClick={() => updateBooking(selectedBooking.id, {
                       contractStatus: selectedBooking.contractStatus === 'signed' ? 'unsigned' : 'signed'
                     })}
-                    className={`w-full px-4 py-2 rounded-lg font-medium transition-colors ${
+                    className={`w-full px-4 py-2.5 rounded-lg font-medium transition-colors ${
                       selectedBooking.contractStatus === 'signed'
                         ? 'bg-purple-500 text-white'
                         : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
@@ -499,9 +504,9 @@ export default function BookingsTable({ initialBookings, bikes, defaultPrice }: 
               </div>
 
               {/* Bond */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
-                  <label className="block text-white font-medium mb-2">Bond ($AUD)</label>
+                  <label className="block text-white font-medium mb-2 text-sm sm:text-base">Bond ($AUD)</label>
                   <input
                     type="number"
                     value={editBond}
@@ -512,15 +517,15 @@ export default function BookingsTable({ initialBookings, bikes, defaultPrice }: 
                         updateBooking(selectedBooking.id, { bondAmount: newBond });
                       }
                     }}
-                    className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-white font-medium mb-2">Estado del Bond</label>
+                  <label className="block text-white font-medium mb-2 text-sm sm:text-base">Estado del Bond</label>
                   <select
                     value={selectedBooking.bondStatus}
                     onChange={(e) => updateBooking(selectedBooking.id, { bondStatus: e.target.value })}
-                    className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
                   >
                     <option value="not_paid">No pagado</option>
                     <option value="paid">Pagado</option>
@@ -530,9 +535,9 @@ export default function BookingsTable({ initialBookings, bikes, defaultPrice }: 
               </div>
 
               {/* Dates - Editable */}
-              <div className="bg-slate-700/50 rounded-lg p-4 space-y-4">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-white font-medium">Fechas del Alquiler</h3>
+              <div className="bg-slate-700/50 rounded-lg p-3 sm:p-4 space-y-3 sm:space-y-4">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+                  <h3 className="text-white font-medium text-sm sm:text-base">Fechas del Alquiler</h3>
                   <div className="flex gap-2">
                     <button
                       onClick={() => {
@@ -543,9 +548,9 @@ export default function BookingsTable({ initialBookings, bikes, defaultPrice }: 
                         });
                       }}
                       disabled={loading}
-                      className="px-3 py-1 bg-orange-500/20 text-orange-400 rounded-lg text-sm hover:bg-orange-500/30 transition-colors"
+                      className="flex-1 sm:flex-none px-3 py-1.5 bg-orange-500/20 text-orange-400 rounded-lg text-sm hover:bg-orange-500/30 transition-colors"
                     >
-                      +1 Semana
+                      +1 Sem
                     </button>
                     <button
                       onClick={() => {
@@ -556,33 +561,33 @@ export default function BookingsTable({ initialBookings, bikes, defaultPrice }: 
                         });
                       }}
                       disabled={loading}
-                      className="px-3 py-1 bg-orange-500/20 text-orange-400 rounded-lg text-sm hover:bg-orange-500/30 transition-colors"
+                      className="flex-1 sm:flex-none px-3 py-1.5 bg-orange-500/20 text-orange-400 rounded-lg text-sm hover:bg-orange-500/30 transition-colors"
                     >
-                      +2 Semanas
+                      +2 Sem
                     </button>
                   </div>
                 </div>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-3 gap-2 sm:gap-4">
                   <div>
-                    <label className="block text-slate-400 text-sm mb-1">Fecha Inicio</label>
+                    <label className="block text-slate-400 text-xs sm:text-sm mb-1">Inicio</label>
                     <input
                       type="date"
                       value={format(new Date(selectedBooking.startDate), 'yyyy-MM-dd')}
                       onChange={(e) => updateBooking(selectedBooking.id, { startDate: new Date(e.target.value).toISOString() })}
-                      className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      className="w-full px-2 sm:px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-slate-400 text-sm mb-1">Fecha Fin</label>
+                    <label className="block text-slate-400 text-xs sm:text-sm mb-1">Fin</label>
                     <input
                       type="date"
                       value={format(new Date(selectedBooking.endDate), 'yyyy-MM-dd')}
                       onChange={(e) => updateBooking(selectedBooking.id, { endDate: new Date(e.target.value).toISOString() })}
-                      className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      className="w-full px-2 sm:px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-slate-400 text-sm mb-1">Semanas</label>
+                    <label className="block text-slate-400 text-xs sm:text-sm mb-1">Sem</label>
                     <input
                       type="number"
                       min="1"
@@ -595,20 +600,20 @@ export default function BookingsTable({ initialBookings, bikes, defaultPrice }: 
                           endDate: newEndDate.toISOString(),
                         });
                       }}
-                      className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      className="w-full px-2 sm:px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
                     />
                   </div>
                 </div>
-                <div className="text-sm text-slate-400">
-                  Total: <span className="text-white font-medium">{selectedBooking.weeks} semanas × ${editPrice || defaultPrice} = ${selectedBooking.weeks * (parseFloat(editPrice) || defaultPrice)} AUD</span>
+                <div className="text-xs sm:text-sm text-slate-400">
+                  Total: <span className="text-white font-medium">{selectedBooking.weeks} sem × ${editPrice || defaultPrice} = ${selectedBooking.weeks * (parseFloat(editPrice) || defaultPrice)} AUD</span>
                 </div>
               </div>
 
               {/* Client Info */}
-              <div className="grid grid-cols-2 gap-4 text-sm">
+              <div className="grid grid-cols-2 gap-3 sm:gap-4 text-xs sm:text-sm">
                 <div>
-                  <p className="text-slate-400">Direccion</p>
-                  <p className="text-white">{selectedBooking.address || '-'}</p>
+                  <p className="text-slate-400">Dirección</p>
+                  <p className="text-white truncate">{selectedBooking.address || '-'}</p>
                 </div>
                 <div>
                   <p className="text-slate-400">Documento</p>
@@ -616,7 +621,7 @@ export default function BookingsTable({ initialBookings, bikes, defaultPrice }: 
                 </div>
                 <div>
                   <p className="text-slate-400">WhatsApp</p>
-                  <p className="text-white">{selectedBooking.hasWhatsapp ? 'Si' : 'No'}</p>
+                  <p className="text-white">{selectedBooking.hasWhatsapp ? 'Sí' : 'No'}</p>
                 </div>
                 <div>
                   <p className="text-slate-400">Creado por</p>
@@ -656,19 +661,19 @@ export default function BookingsTable({ initialBookings, bikes, defaultPrice }: 
                 </div>
 
                 {showPaymentForm && (
-                  <div className="bg-slate-700 rounded-lg p-4 mb-4 space-y-3">
-                    <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-slate-700 rounded-lg p-3 sm:p-4 mb-4 space-y-3">
+                    <div className="grid grid-cols-2 gap-2 sm:gap-3">
                       <input
                         type="number"
                         placeholder="Monto"
                         value={newPayment.amount}
                         onChange={(e) => setNewPayment({ ...newPayment, amount: e.target.value })}
-                        className="px-3 py-2 bg-slate-600 border border-slate-500 rounded-lg text-white text-sm"
+                        className="px-3 py-2.5 bg-slate-600 border border-slate-500 rounded-lg text-white text-sm"
                       />
                       <select
                         value={newPayment.type}
                         onChange={(e) => setNewPayment({ ...newPayment, type: e.target.value })}
-                        className="px-3 py-2 bg-slate-600 border border-slate-500 rounded-lg text-white text-sm"
+                        className="px-3 py-2.5 bg-slate-600 border border-slate-500 rounded-lg text-white text-sm"
                       >
                         <option value="weekly">Semanal</option>
                         <option value="advance">Adelanto</option>
@@ -678,7 +683,7 @@ export default function BookingsTable({ initialBookings, bikes, defaultPrice }: 
                     <select
                       value={newPayment.method}
                       onChange={(e) => setNewPayment({ ...newPayment, method: e.target.value })}
-                      className="w-full px-3 py-2 bg-slate-600 border border-slate-500 rounded-lg text-white text-sm"
+                      className="w-full px-3 py-2.5 bg-slate-600 border border-slate-500 rounded-lg text-white text-sm"
                     >
                       <option value="cash">Efectivo</option>
                       <option value="transfer">Transferencia</option>
@@ -686,14 +691,14 @@ export default function BookingsTable({ initialBookings, bikes, defaultPrice }: 
                     <div className="flex gap-2">
                       <button
                         onClick={() => setShowPaymentForm(false)}
-                        className="flex-1 px-3 py-2 bg-slate-600 text-white rounded-lg text-sm"
+                        className="flex-1 px-3 py-2.5 bg-slate-600 text-white rounded-lg text-sm active:scale-[0.98]"
                       >
                         Cancelar
                       </button>
                       <button
                         onClick={addPayment}
                         disabled={loading}
-                        className="flex-1 px-3 py-2 bg-green-500 text-white rounded-lg text-sm font-medium"
+                        className="flex-1 px-3 py-2.5 bg-green-500 text-white rounded-lg text-sm font-medium active:scale-[0.98]"
                       >
                         Guardar
                       </button>
@@ -733,102 +738,107 @@ export default function BookingsTable({ initialBookings, bikes, defaultPrice }: 
 
       {/* New Booking Modal */}
       {showNewForm && (
-        <div className="fixed inset-0 bg-black/50 flex items-start justify-center z-50 p-4 overflow-y-auto">
-          <div className="bg-slate-800 rounded-xl border border-slate-700 w-full max-w-lg my-8">
-            <div className="p-6 border-b border-slate-700">
-              <h2 className="text-xl font-semibold text-white">Nueva Reserva</h2>
+        <div className="fixed inset-0 bg-black/50 flex items-start justify-center z-50 p-2 sm:p-4 overflow-y-auto">
+          <div className="bg-slate-800 rounded-xl border border-slate-700 w-full max-w-lg my-2 sm:my-8">
+            <div className="p-4 sm:p-6 border-b border-slate-700 flex items-center justify-between">
+              <h2 className="text-lg sm:text-xl font-semibold text-white">Nueva Reserva</h2>
+              <button onClick={() => setShowNewForm(false)} className="text-slate-400 hover:text-white p-1 -mr-1">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
             </div>
-            <form onSubmit={createBooking} className="p-6 space-y-4">
+            <form onSubmit={createBooking} className="p-4 sm:p-6 space-y-4">
               <div>
-                <label className="block text-white font-medium mb-2">Nombre Completo *</label>
+                <label className="block text-white font-medium mb-2 text-sm sm:text-base">Nombre Completo *</label>
                 <input
                   type="text"
                   value={newBooking.fullName}
                   onChange={(e) => setNewBooking({ ...newBooking, fullName: e.target.value })}
-                  className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white"
+                  className="w-full px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white"
                   required
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
-                  <label className="block text-white font-medium mb-2">Email *</label>
+                  <label className="block text-white font-medium mb-2 text-sm sm:text-base">Email *</label>
                   <input
                     type="email"
                     value={newBooking.email}
                     onChange={(e) => setNewBooking({ ...newBooking, email: e.target.value })}
-                    className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white"
+                    className="w-full px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-white font-medium mb-2">Teléfono</label>
+                  <label className="block text-white font-medium mb-2 text-sm sm:text-base">Teléfono</label>
                   <input
                     type="tel"
                     value={newBooking.phone}
                     onChange={(e) => setNewBooking({ ...newBooking, phone: e.target.value })}
-                    className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white"
+                    className="w-full px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white"
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3 sm:gap-4">
                 <div>
-                  <label className="block text-white font-medium mb-2">Fecha Inicio *</label>
+                  <label className="block text-white font-medium mb-2 text-sm sm:text-base">Fecha Inicio *</label>
                   <input
                     type="date"
                     value={newBooking.startDate}
                     onChange={(e) => setNewBooking({ ...newBooking, startDate: e.target.value })}
-                    className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white"
+                    className="w-full px-3 sm:px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white text-sm"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-white font-medium mb-2">Fecha Fin *</label>
+                  <label className="block text-white font-medium mb-2 text-sm sm:text-base">Fecha Fin *</label>
                   <input
                     type="date"
                     value={newBooking.endDate}
                     onChange={(e) => setNewBooking({ ...newBooking, endDate: e.target.value })}
-                    className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white"
+                    className="w-full px-3 sm:px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white text-sm"
                     required
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-3 gap-2 sm:gap-4">
                 <div>
-                  <label className="block text-white font-medium mb-2">Semanas *</label>
+                  <label className="block text-white font-medium mb-2 text-sm sm:text-base">Sem *</label>
                   <input
                     type="number"
                     min="1"
                     value={newBooking.weeks}
                     onChange={(e) => setNewBooking({ ...newBooking, weeks: parseInt(e.target.value) })}
-                    className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white"
+                    className="w-full px-3 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white text-sm"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-white font-medium mb-2">Precio/Sem</label>
+                  <label className="block text-white font-medium mb-2 text-sm sm:text-base">$/Sem</label>
                   <input
                     type="number"
                     value={newBooking.agreedPrice}
                     onChange={(e) => setNewBooking({ ...newBooking, agreedPrice: e.target.value })}
-                    className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white"
+                    className="w-full px-3 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white text-sm"
                   />
                 </div>
                 <div>
-                  <label className="block text-white font-medium mb-2">Bond</label>
+                  <label className="block text-white font-medium mb-2 text-sm sm:text-base">Bond</label>
                   <input
                     type="number"
                     value={newBooking.bondAmount}
                     onChange={(e) => setNewBooking({ ...newBooking, bondAmount: e.target.value })}
-                    className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white"
+                    className="w-full px-3 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white text-sm"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-white font-medium mb-2">Bici</label>
+                <label className="block text-white font-medium mb-2 text-sm sm:text-base">Bici</label>
                 <select
                   value={newBooking.bikeId}
                   onChange={(e) => setNewBooking({ ...newBooking, bikeId: e.target.value })}
-                  className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white"
+                  className="w-full px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white"
                 >
                   <option value="">Sin asignar</option>
                   {bikes.filter((b) => b.status === 'available').map((bike) => (
@@ -836,20 +846,20 @@ export default function BookingsTable({ initialBookings, bikes, defaultPrice }: 
                   ))}
                 </select>
               </div>
-              <div className="flex gap-3 pt-4">
+              <div className="flex gap-3 pt-2">
                 <button
                   type="button"
                   onClick={() => setShowNewForm(false)}
-                  className="flex-1 px-4 py-2 bg-slate-700 text-white rounded-lg"
+                  className="flex-1 px-4 py-2.5 bg-slate-700 text-white rounded-lg active:scale-[0.98]"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="flex-1 px-4 py-2 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-lg font-medium"
+                  className="flex-1 px-4 py-2.5 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-lg font-medium active:scale-[0.98]"
                 >
-                  {loading ? 'Creando...' : 'Crear Reserva'}
+                  {loading ? 'Creando...' : 'Crear'}
                 </button>
               </div>
             </form>
