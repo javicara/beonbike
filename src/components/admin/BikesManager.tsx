@@ -174,43 +174,48 @@ export default function BikesManager({ initialBikes }: BikesManagerProps) {
 
       {/* Form Modal */}
       {showForm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-slate-800 rounded-xl border border-slate-700 w-full max-w-md">
-            <div className="p-6 border-b border-slate-700">
-              <h2 className="text-xl font-semibold text-white">
+        <div className="fixed inset-0 bg-black/50 flex items-start justify-center z-50 p-2 sm:p-4 overflow-y-auto">
+          <div className="bg-slate-800 rounded-xl border border-slate-700 w-full max-w-md my-2 sm:my-8">
+            <div className="p-4 sm:p-6 border-b border-slate-700 flex items-center justify-between">
+              <h2 className="text-lg sm:text-xl font-semibold text-white">
                 {editingBike ? 'Editar Bici' : 'Nueva Bici'}
               </h2>
+              <button onClick={resetForm} className="text-slate-400 hover:text-white p-1 -mr-1">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
             </div>
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
+            <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4">
               <div>
-                <label className="block text-white font-medium mb-2">Nombre</label>
+                <label className="block text-white font-medium mb-2 text-sm sm:text-base">Nombre</label>
                 <input
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   placeholder="ej: Scott 750w"
-                  className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  className="w-full px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
                   required
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3 sm:gap-4">
                 <div>
-                  <label className="block text-white font-medium mb-2">Tipo</label>
+                  <label className="block text-white font-medium mb-2 text-sm sm:text-base">Tipo</label>
                   <select
                     value={formData.type}
                     onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                    className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
                   >
                     <option value="rental">Alquiler</option>
                     <option value="sale">Venta</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-white font-medium mb-2">Estado</label>
+                  <label className="block text-white font-medium mb-2 text-sm sm:text-base">Estado</label>
                   <select
                     value={formData.status}
                     onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                    className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
                   >
                     <option value="available">Disponible</option>
                     <option value="rented">Alquilada</option>
@@ -221,38 +226,38 @@ export default function BikesManager({ initialBikes }: BikesManagerProps) {
               </div>
               {formData.type === 'sale' && (
                 <div>
-                  <label className="block text-white font-medium mb-2">Precio de Venta (AUD)</label>
+                  <label className="block text-white font-medium mb-2 text-sm sm:text-base">Precio de Venta (AUD)</label>
                   <input
                     type="number"
                     value={formData.salePrice}
                     onChange={(e) => setFormData({ ...formData, salePrice: e.target.value })}
                     placeholder="0"
-                    className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
                   />
                 </div>
               )}
               <div>
-                <label className="block text-white font-medium mb-2">Notas</label>
+                <label className="block text-white font-medium mb-2 text-sm sm:text-base">Notas</label>
                 <textarea
                   value={formData.notes}
                   onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                   placeholder="Notas internas..."
                   rows={3}
-                  className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none"
+                  className="w-full px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none"
                 />
               </div>
-              <div className="flex gap-3 pt-4">
+              <div className="flex gap-3 pt-2">
                 <button
                   type="button"
                   onClick={resetForm}
-                  className="flex-1 px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition-colors"
+                  className="flex-1 px-4 py-2.5 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition-colors active:scale-[0.98]"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="flex-1 px-4 py-2 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-lg font-medium hover:from-orange-600 hover:to-amber-600 transition-colors disabled:opacity-50"
+                  className="flex-1 px-4 py-2.5 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-lg font-medium hover:from-orange-600 hover:to-amber-600 transition-colors disabled:opacity-50 active:scale-[0.98]"
                 >
                   {loading ? 'Guardando...' : 'Guardar'}
                 </button>
@@ -264,14 +269,14 @@ export default function BikesManager({ initialBikes }: BikesManagerProps) {
 
       {/* Bikes List */}
       <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
-        <div className="p-6 border-b border-slate-700">
-          <h2 className="text-xl font-semibold text-white">Inventario</h2>
+        <div className="p-4 sm:p-6 border-b border-slate-700">
+          <h2 className="text-lg sm:text-xl font-semibold text-white">Inventario</h2>
         </div>
         <div className="divide-y divide-slate-700">
           {bikes.length === 0 ? (
-            <div className="p-12 text-center">
-              <div className="w-16 h-16 bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="p-8 sm:p-12 text-center">
+              <div className="w-14 h-14 sm:w-16 sm:h-16 bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-7 h-7 sm:w-8 sm:h-8 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
               </div>
@@ -280,19 +285,19 @@ export default function BikesManager({ initialBikes }: BikesManagerProps) {
             </div>
           ) : (
             bikes.map((bike) => (
-              <div key={bike.id} className="p-6 flex flex-col sm:flex-row sm:items-center gap-4">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3">
-                    <h3 className="text-white font-semibold text-lg">{bike.name}</h3>
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[bike.status]}`}>
+              <div key={bike.id} className="p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h3 className="text-white font-semibold text-base sm:text-lg">{bike.name}</h3>
+                    <span className={`px-2 py-0.5 sm:py-1 rounded-full text-xs font-medium ${statusColors[bike.status]}`}>
                       {statusLabels[bike.status]}
                     </span>
-                    <span className="px-2 py-1 rounded-full text-xs font-medium bg-slate-700 text-slate-300">
+                    <span className="px-2 py-0.5 sm:py-1 rounded-full text-xs font-medium bg-slate-700 text-slate-300">
                       {typeLabels[bike.type]}
                     </span>
                   </div>
                   {bike.notes && (
-                    <p className="text-slate-400 text-sm mt-1">{bike.notes}</p>
+                    <p className="text-slate-400 text-sm mt-1 truncate">{bike.notes}</p>
                   )}
                   {bike.rentals.length > 0 && (
                     <div className="mt-2">
@@ -311,13 +316,13 @@ export default function BikesManager({ initialBikes }: BikesManagerProps) {
                 <div className="flex gap-2">
                   <button
                     onClick={() => handleEdit(bike)}
-                    className="px-3 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition-colors text-sm"
+                    className="flex-1 sm:flex-none px-3 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition-colors text-sm active:scale-[0.98]"
                   >
                     Editar
                   </button>
                   <button
                     onClick={() => handleDelete(bike)}
-                    className="px-3 py-2 bg-red-500/10 text-red-500 rounded-lg hover:bg-red-500/20 transition-colors text-sm"
+                    className="flex-1 sm:flex-none px-3 py-2 bg-red-500/10 text-red-500 rounded-lg hover:bg-red-500/20 transition-colors text-sm active:scale-[0.98]"
                   >
                     Eliminar
                   </button>
