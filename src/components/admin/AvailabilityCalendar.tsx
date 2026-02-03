@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback, memo } from 'react';
 import {
   format,
   startOfMonth,
@@ -59,12 +59,89 @@ interface AvailabilityCalendarProps {
   interested: Interest[];
 }
 
-const bikeColors: Record<string, string> = {
+// Move constants outside component to avoid recreating on each render
+const BIKE_COLORS: Record<string, string> = {
   'Scott 750w': 'bg-orange-500',
   'Giant 750w': 'bg-blue-500',
   'Polygon 500w': 'bg-purple-500',
   'Crane 500w': 'bg-teal-500',
 };
+
+const WEEK_DAYS = ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'] as const;
+
+const FILTER_OPTIONS = [
+  { value: 'all', label: 'Todas' },
+  { value: 'confirmed', label: 'Confirmadas' },
+  { value: 'pending', label: 'Pendientes' },
+] as const;
+
+// Utility function
+const getBikeColor = (bikeName: string | undefined): string => {
+  if (!bikeName) return 'bg-slate-500';
+  return BIKE_COLORS[bikeName] || 'bg-slate-500';
+};
+
+// Memoized day cell component
+const DayCell = memo(function DayCell({
+  day,
+  isCurrentMonth,
+  isToday,
+  bookings,
+}: {
+  day: Date;
+  isCurrentMonth: boolean;
+  isToday: boolean;
+  bookings: Booking[];
+}) {
+  return (
+    <div
+      className={`min-h-12 sm:min-h-20 p-0.5 sm:p-1 rounded sm:rounded-lg border ${
+        isCurrentMonth ? 'bg-slate-700/30 border-slate-700' : 'bg-slate-800/50 border-slate-700/50'
+      } ${isToday ? 'ring-2 ring-orange-500' : ''}`}
+    >
+      <div className={`text-xs sm:text-sm font-medium mb-0.5 sm:mb-1 ${isCurrentMonth ? 'text-white' : 'text-slate-500'} ${isToday ? 'text-orange-500' : ''}`}>
+        {format(day, 'd')}
+      </div>
+      <div className="space-y-0.5">
+        {/* Desktop: show names */}
+        <div className="hidden sm:block space-y-0.5">
+          {bookings.slice(0, 3).map((booking) => (
+            <div
+              key={booking.id}
+              className={`text-xs px-1 py-0.5 rounded truncate ${
+                booking.status === 'confirmed'
+                  ? `${getBikeColor(booking.bike?.name)} text-white`
+                  : 'bg-amber-500/50 text-amber-100'
+              }`}
+              title={`${booking.fullName} - ${booking.bike?.name || 'Sin bici'}`}
+            >
+              {booking.fullName.split(' ')[0]}
+            </div>
+          ))}
+          {bookings.length > 3 && (
+            <div className="text-xs text-slate-400 px-1">+{bookings.length - 3}</div>
+          )}
+        </div>
+        {/* Mobile: compact dots */}
+        <div className="sm:hidden flex flex-wrap gap-0.5 justify-center">
+          {bookings.slice(0, 4).map((booking) => (
+            <div
+              key={booking.id}
+              className={`w-1.5 h-1.5 rounded-full ${
+                booking.status === 'confirmed'
+                  ? getBikeColor(booking.bike?.name)
+                  : 'bg-amber-500'
+              }`}
+            />
+          ))}
+          {bookings.length > 4 && (
+            <span className="text-[8px] text-slate-400">+{bookings.length - 4}</span>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+});
 
 export default function AvailabilityCalendar({
   bookings,
@@ -74,6 +151,15 @@ export default function AvailabilityCalendar({
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [filter, setFilter] = useState<'all' | 'confirmed' | 'pending'>('all');
   const [selectedBike, setSelectedBike] = useState<string | 'all'>('all');
+
+  // Memoized filtered bookings
+  const filteredBookings = useMemo(() => {
+    return bookings.filter((booking) => {
+      const matchesStatus = filter === 'all' || booking.status === filter;
+      const matchesBike = selectedBike === 'all' || booking.bikeId === selectedBike;
+      return matchesStatus && matchesBike;
+    });
+  }, [bookings, filter, selectedBike]);
 
   // Get 8 weeks starting from current week for timeline view
   const timelineWeeks = useMemo(() => {
@@ -89,45 +175,54 @@ export default function AvailabilityCalendar({
     return eachDayOfInterval({ start: calendarStart, end: calendarEnd });
   }, [currentMonth]);
 
-  const filteredBookings = bookings.filter((booking) => {
-    const matchesStatus = filter === 'all' || booking.status === filter;
-    const matchesBike = selectedBike === 'all' || booking.bikeId === selectedBike;
-    return matchesStatus && matchesBike;
-  });
+  // Pre-compute bookings for each day to avoid repeated filtering
+  const bookingsByDay = useMemo(() => {
+    const map = new Map<string, Booking[]>();
+    days.forEach((day) => {
+      const dayKey = format(day, 'yyyy-MM-dd');
+      const dayBookings = filteredBookings.filter((booking) =>
+        isWithinInterval(day, {
+          start: new Date(booking.startDate),
+          end: new Date(booking.endDate),
+        })
+      );
+      map.set(dayKey, dayBookings);
+    });
+    return map;
+  }, [days, filteredBookings]);
 
-  const getBookingsForDay = (date: Date) => {
-    return filteredBookings.filter((booking) =>
-      isWithinInterval(date, {
-        start: new Date(booking.startDate),
-        end: new Date(booking.endDate),
-      })
-    );
-  };
+  // Pre-compute bike bookings for timeline
+  const bikeBookingsMap = useMemo(() => {
+    const map = new Map<string, Booking[]>();
+    bikes.forEach((bike) => {
+      map.set(bike.id, bookings.filter((b) => b.bikeId === bike.id));
+    });
+    return map;
+  }, [bikes, bookings]);
 
-  const getBikeColor = (bikeName: string | undefined) => {
-    if (!bikeName) return 'bg-slate-500';
-    return bikeColors[bikeName] || 'bg-slate-500';
-  };
+  const handlePrevMonth = useCallback(() => {
+    setCurrentMonth((prev) => subMonths(prev, 1));
+  }, []);
 
-  const weekDays = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+  const handleNextMonth = useCallback(() => {
+    setCurrentMonth((prev) => addMonths(prev, 1));
+  }, []);
+
+  const todayStr = format(new Date(), 'yyyy-MM-dd');
 
   return (
     <div className="space-y-4 sm:space-y-6">
       {/* Filters */}
       <div className="space-y-3">
-        <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-hide">
-          {[
-            { value: 'all', label: 'Todas' },
-            { value: 'confirmed', label: 'Confirmadas' },
-            { value: 'pending', label: 'Pendientes' },
-          ].map((opt) => (
+        <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide snap-x">
+          {FILTER_OPTIONS.map((opt) => (
             <button
               key={opt.value}
               onClick={() => setFilter(opt.value as typeof filter)}
-              className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
+              className={`px-4 py-2.5 rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 snap-start min-h-[44px] ${
                 filter === opt.value
                   ? 'bg-orange-500 text-white'
-                  : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+                  : 'bg-slate-700 text-slate-300 hover:bg-slate-600 active:bg-slate-500'
               }`}
             >
               {opt.label}
@@ -137,7 +232,7 @@ export default function AvailabilityCalendar({
         <select
           value={selectedBike}
           onChange={(e) => setSelectedBike(e.target.value)}
-          className="w-full sm:w-auto px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white text-sm"
+          className="w-full sm:w-auto px-3 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white text-sm min-h-[44px]"
         >
           <option value="all">Todas las bicis</option>
           {bikes.map((bike) => (
@@ -153,7 +248,7 @@ export default function AvailabilityCalendar({
         {/* Mobile: Simple card view */}
         <div className="md:hidden space-y-3">
           {bikes.map((bike) => {
-            const bikeBookings = bookings.filter((b) => b.bikeId === bike.id);
+            const bikeBookings = bikeBookingsMap.get(bike.id) || [];
             const activeBooking = bikeBookings.find((b) => {
               const now = new Date();
               const end = new Date(b.endDate);
@@ -166,12 +261,12 @@ export default function AvailabilityCalendar({
                     <div className={`w-3 h-3 rounded-full ${getBikeColor(bike.name)}`}></div>
                     <span className="text-white font-medium text-sm">{bike.name}</span>
                   </div>
-                  <span className={`text-xs px-2 py-1 rounded-full ${bike.status === 'available' ? 'bg-green-500/20 text-green-400' : bike.status === 'rented' ? 'bg-blue-500/20 text-blue-400' : 'bg-slate-600 text-slate-400'}`}>
+                  <span className={`text-xs px-2 py-1 rounded-full min-h-[28px] flex items-center ${bike.status === 'available' ? 'bg-green-500/20 text-green-400' : bike.status === 'rented' ? 'bg-blue-500/20 text-blue-400' : 'bg-slate-600 text-slate-400'}`}>
                     {bike.status === 'available' ? 'Disponible' : bike.status === 'rented' ? 'Alquilada' : 'Mant.'}
                   </span>
                 </div>
                 {activeBooking && (
-                  <Link href={`/admin/bookings?selected=${activeBooking.id}`} className="mt-2 block text-sm">
+                  <Link href={`/admin/bookings?selected=${activeBooking.id}`} className="mt-2 block text-sm p-1 -m-1 active:bg-slate-600/30 rounded">
                     <span className="text-slate-400">Cliente: </span>
                     <span className="text-white">{activeBooking.fullName}</span>
                     <span className="text-slate-500 block text-xs">
@@ -199,7 +294,7 @@ export default function AvailabilityCalendar({
             </thead>
             <tbody>
               {bikes.map((bike) => {
-                const bikeBookings = bookings.filter((b) => b.bikeId === bike.id);
+                const bikeBookings = bikeBookingsMap.get(bike.id) || [];
                 return (
                   <tr key={bike.id} className="border-t border-slate-700">
                     <td className="py-3">
@@ -251,8 +346,8 @@ export default function AvailabilityCalendar({
       <div className="bg-slate-800 rounded-xl border border-slate-700 p-3 sm:p-6">
         <div className="flex items-center justify-between mb-4 sm:mb-6">
           <button
-            onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
-            className="p-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors active:scale-95"
+            onClick={handlePrevMonth}
+            className="p-2.5 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors active:scale-95 min-h-[44px] min-w-[44px] flex items-center justify-center"
           >
             <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -262,8 +357,8 @@ export default function AvailabilityCalendar({
             {format(currentMonth, 'MMMM yyyy', { locale: es })}
           </h2>
           <button
-            onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
-            className="p-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors active:scale-95"
+            onClick={handleNextMonth}
+            className="p-2.5 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors active:scale-95 min-h-[44px] min-w-[44px] flex items-center justify-center"
           >
             <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -272,7 +367,7 @@ export default function AvailabilityCalendar({
         </div>
 
         <div className="grid grid-cols-7 gap-0.5 sm:gap-1 mb-1 sm:mb-2">
-          {weekDays.map((day, i) => (
+          {WEEK_DAYS.map((day) => (
             <div key={day} className="text-center text-xs sm:text-sm font-medium text-slate-400 py-1 sm:py-2">
               <span className="hidden sm:inline">{day}</span>
               <span className="sm:hidden">{day.charAt(0)}</span>
@@ -282,59 +377,19 @@ export default function AvailabilityCalendar({
 
         <div className="grid grid-cols-7 gap-0.5 sm:gap-1">
           {days.map((day) => {
-            const dayBookings = getBookingsForDay(day);
+            const dayKey = format(day, 'yyyy-MM-dd');
+            const dayBookings = bookingsByDay.get(dayKey) || [];
             const isCurrentMonth = isSameMonth(day, currentMonth);
-            const isToday = format(day, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd');
+            const isToday = dayKey === todayStr;
 
             return (
-              <div
+              <DayCell
                 key={day.toISOString()}
-                className={`min-h-12 sm:min-h-20 p-0.5 sm:p-1 rounded sm:rounded-lg border ${
-                  isCurrentMonth ? 'bg-slate-700/30 border-slate-700' : 'bg-slate-800/50 border-slate-700/50'
-                } ${isToday ? 'ring-2 ring-orange-500' : ''}`}
-              >
-                <div className={`text-xs sm:text-sm font-medium mb-0.5 sm:mb-1 ${isCurrentMonth ? 'text-white' : 'text-slate-500'} ${isToday ? 'text-orange-500' : ''}`}>
-                  {format(day, 'd')}
-                </div>
-                <div className="space-y-0.5">
-                  {/* Mobile: just show dots, Desktop: show names */}
-                  <div className="hidden sm:block space-y-0.5">
-                    {dayBookings.slice(0, 3).map((booking) => (
-                      <div
-                        key={booking.id}
-                        className={`text-xs px-1 py-0.5 rounded truncate ${
-                          booking.status === 'confirmed'
-                            ? `${getBikeColor(booking.bike?.name)} text-white`
-                            : 'bg-amber-500/50 text-amber-100'
-                        }`}
-                        title={`${booking.fullName} - ${booking.bike?.name || 'Sin bici'}`}
-                      >
-                        {booking.fullName.split(' ')[0]}
-                      </div>
-                    ))}
-                    {dayBookings.length > 3 && (
-                      <div className="text-xs text-slate-400 px-1">+{dayBookings.length - 3}</div>
-                    )}
-                  </div>
-                  {/* Mobile: compact dots */}
-                  <div className="sm:hidden flex flex-wrap gap-0.5 justify-center">
-                    {dayBookings.slice(0, 4).map((booking) => (
-                      <div
-                        key={booking.id}
-                        className={`w-1.5 h-1.5 rounded-full ${
-                          booking.status === 'confirmed'
-                            ? getBikeColor(booking.bike?.name)
-                            : 'bg-amber-500'
-                        }`}
-                        title={`${booking.fullName}`}
-                      />
-                    ))}
-                    {dayBookings.length > 4 && (
-                      <span className="text-[8px] text-slate-400">+{dayBookings.length - 4}</span>
-                    )}
-                  </div>
-                </div>
-              </div>
+                day={day}
+                isCurrentMonth={isCurrentMonth}
+                isToday={isToday}
+                bookings={dayBookings}
+              />
             );
           })}
         </div>
@@ -357,26 +412,26 @@ export default function AvailabilityCalendar({
         </div>
       </div>
 
-      {/* Active Bookings */}
+      {/* Active Bookings - limited to first 10 for performance */}
       <div className="bg-slate-800 rounded-xl border border-slate-700 p-4 sm:p-6">
         <h3 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">
           Reservas Activas ({filteredBookings.length})
         </h3>
-        <div className="space-y-2 sm:space-y-3">
+        <div className="space-y-2 sm:space-y-3 max-h-[400px] overflow-y-auto">
           {filteredBookings.length === 0 ? (
             <p className="text-slate-400 text-sm">No hay reservas</p>
           ) : (
-            filteredBookings.map((booking) => (
+            filteredBookings.slice(0, 20).map((booking) => (
               <Link
                 key={booking.id}
                 href={`/admin/bookings?selected=${booking.id}`}
-                className="flex items-start sm:items-center gap-3 sm:gap-4 p-3 rounded-lg border border-slate-700 hover:bg-slate-700/30 active:bg-slate-700/50 transition-colors"
+                className="flex items-start sm:items-center gap-3 sm:gap-4 p-3 rounded-lg border border-slate-700 hover:bg-slate-700/30 active:bg-slate-700/50 transition-colors min-h-[56px]"
               >
                 <div className={`w-3 h-3 rounded-full flex-shrink-0 mt-1 sm:mt-0 ${getBikeColor(booking.bike?.name)}`}></div>
                 <div className="flex-1 min-w-0">
                   <p className="text-white font-medium text-sm sm:text-base truncate">{booking.fullName}</p>
                   <p className="text-slate-400 text-xs sm:text-sm truncate">
-                    {booking.bike?.name || 'Sin bici'} • {format(new Date(booking.startDate), 'dd MMM', { locale: es })} - {format(new Date(booking.endDate), 'dd MMM', { locale: es })}
+                    {booking.bike?.name || 'Sin bici'} - {format(new Date(booking.startDate), 'dd MMM', { locale: es })} - {format(new Date(booking.endDate), 'dd MMM', { locale: es })}
                   </p>
                 </div>
                 <div className="text-right flex-shrink-0">
@@ -394,6 +449,11 @@ export default function AvailabilityCalendar({
                 </div>
               </Link>
             ))
+          )}
+          {filteredBookings.length > 20 && (
+            <p className="text-center text-slate-400 text-sm py-2">
+              +{filteredBookings.length - 20} mas...
+            </p>
           )}
         </div>
       </div>

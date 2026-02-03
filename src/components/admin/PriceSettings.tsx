@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 
 interface PriceSetting {
   key: string;
@@ -20,13 +20,13 @@ export default function PriceSettings({ initialSettings }: PriceSettingsProps) {
   const [saving, setSaving] = useState<string | null>(null);
   const [saved, setSaved] = useState<string | null>(null);
 
-  const handleChange = (key: string, value: string) => {
+  const handleChange = useCallback((key: string, value: string) => {
     setSettings((prev) =>
       prev.map((s) => (s.key === key ? { ...s, value } : s))
     );
-  };
+  }, []);
 
-  const handleSave = async (setting: PriceSetting) => {
+  const handleSave = useCallback(async (setting: PriceSetting) => {
     setSaving(setting.key);
     try {
       const response = await fetch("/api/admin/settings", {
@@ -48,22 +48,26 @@ export default function PriceSettings({ initialSettings }: PriceSettingsProps) {
     } finally {
       setSaving(null);
     }
-  };
+  }, []);
 
-  const handleSaveAll = async () => {
+  // Batch all settings saves in parallel instead of sequential
+  const handleSaveAll = useCallback(async () => {
     setSaving("all");
     try {
-      for (const setting of settings) {
-        await fetch("/api/admin/settings", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            key: setting.key,
-            value: setting.value,
-            description: setting.description,
-          }),
-        });
-      }
+      // Use Promise.all for parallel requests instead of sequential loop
+      await Promise.all(
+        settings.map((setting) =>
+          fetch("/api/admin/settings", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              key: setting.key,
+              value: setting.value,
+              description: setting.description,
+            }),
+          })
+        )
+      );
       setSaved("all");
       setTimeout(() => setSaved(null), 2000);
     } catch (error) {
@@ -71,7 +75,7 @@ export default function PriceSettings({ initialSettings }: PriceSettingsProps) {
     } finally {
       setSaving(null);
     }
-  };
+  }, [settings]);
 
   return (
     <div className="space-y-4 sm:space-y-6">
