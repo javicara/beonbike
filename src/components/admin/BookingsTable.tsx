@@ -1,9 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback, lazy, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { format, differenceInWeeks, addWeeks } from 'date-fns';
 import { es } from 'date-fns/locale';
+
+// Lazy load modals for better initial load performance
+const BookingDetailModal = lazy(() => import('./BookingDetailModal'));
+const NewBookingModal = lazy(() => import('./NewBookingModal'));
 
 interface Payment {
   id: string;
@@ -51,12 +55,78 @@ interface BookingsTableProps {
   defaultPrice: number;
 }
 
-const statusOptions = [
+const STATUS_OPTIONS = [
   { value: 'all', label: 'Todos' },
   { value: 'pending', label: 'Pendientes' },
   { value: 'confirmed', label: 'Confirmadas' },
   { value: 'cancelled', label: 'Canceladas' },
-];
+] as const;
+
+const ITEMS_PER_PAGE = 20;
+
+// Utility function for debt calculation - memoize-friendly
+function calculateDebt(booking: Booking, defaultPrice: number): number {
+  if (booking.status !== 'confirmed') return 0;
+
+  const now = new Date();
+  const startDate = new Date(booking.startDate);
+
+  if (now < startDate) return 0;
+
+  const weeksElapsed = Math.min(
+    Math.ceil(differenceInWeeks(now, startDate)) + 1,
+    booking.weeks
+  );
+
+  const pricePerWeek = booking.agreedPrice || defaultPrice;
+  const totalDue = weeksElapsed * pricePerWeek;
+  const totalPaid = booking.payments.reduce((sum, p) => sum + p.amount, 0);
+
+  return Math.max(0, totalDue - totalPaid);
+}
+
+// Helper components for better rendering
+const StatusBadge = ({ status }: { status: string }) => {
+  const colors = {
+    confirmed: 'bg-green-500/10 text-green-500 border-green-500/20',
+    cancelled: 'bg-red-500/10 text-red-500 border-red-500/20',
+    pending: 'bg-amber-500/10 text-amber-500 border-amber-500/20',
+  };
+  const labels = {
+    confirmed: 'Confirmada',
+    cancelled: 'Cancelada',
+    pending: 'Pendiente',
+  };
+  const color = colors[status as keyof typeof colors] || colors.pending;
+  const label = labels[status as keyof typeof labels] || 'Pendiente';
+
+  return (
+    <span className={`px-2 py-0.5 text-xs font-medium rounded-full border ${color}`}>
+      {label}
+    </span>
+  );
+};
+
+const BondStatusBadge = ({ status }: { status: string }) => {
+  const labels = { paid: 'Pagado', returned: 'Devuelto', not_paid: 'No pagado' };
+  const colors = { paid: 'text-green-500', returned: 'text-blue-500', not_paid: 'text-amber-500' };
+  const label = labels[status as keyof typeof labels] || 'No pagado';
+  const color = colors[status as keyof typeof colors] || colors.not_paid;
+
+  return <span className={`font-medium ${color}`}>{label}</span>;
+};
+
+// Loading spinner for modals
+const ModalLoader = () => (
+  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div className="bg-slate-800 rounded-xl p-6">
+      <svg className="w-8 h-8 animate-spin text-orange-500" fill="none" viewBox="0 0 24 24">
+        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+      </svg>
+    </div>
+  </div>
+);
 
 export default function BookingsTable({ initialBookings, bikes, defaultPrice }: BookingsTableProps) {
   const searchParams = useSearchParams();
@@ -64,257 +134,86 @@ export default function BookingsTable({ initialBookings, bikes, defaultPrice }: 
   const [bookings, setBookings] = useState<Booking[]>(initialBookings);
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
-  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
+  const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null);
   const [showNewForm, setShowNewForm] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
   // Auto-select booking from URL query param
   useEffect(() => {
     const selectedId = searchParams.get('selected');
-    if (selectedId && !selectedBooking) {
-      const booking = bookings.find((b) => b.id === selectedId);
-      if (booking) {
-        setSelectedBooking(booking);
-      }
+    if (selectedId && !selectedBookingId) {
+      setSelectedBookingId(selectedId);
     }
-  }, [searchParams, bookings, selectedBooking]);
+  }, [searchParams, selectedBookingId]);
 
-  // Update URL when selecting/deselecting a booking
-  const handleSelectBooking = (booking: Booking | null) => {
-    setSelectedBooking(booking);
+  // Get selected booking from ID
+  const selectedBooking = useMemo(() => {
+    if (!selectedBookingId) return null;
+    return bookings.find((b) => b.id === selectedBookingId) || null;
+  }, [selectedBookingId, bookings]);
+
+  // Memoized filtered bookings
+  const filteredBookings = useMemo(() => {
+    const searchLower = search.toLowerCase();
+    return bookings.filter((booking) => {
+      const matchesFilter = filter === 'all' || booking.status === filter;
+      const matchesSearch =
+        search === '' ||
+        booking.fullName.toLowerCase().includes(searchLower) ||
+        booking.email.toLowerCase().includes(searchLower) ||
+        (booking.bike?.name || '').toLowerCase().includes(searchLower);
+      return matchesFilter && matchesSearch;
+    });
+  }, [bookings, filter, search]);
+
+  // Pagination
+  const totalPages = Math.ceil(filteredBookings.length / ITEMS_PER_PAGE);
+  const paginatedBookings = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredBookings.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredBookings, currentPage]);
+
+  // Reset page when filter/search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filter, search]);
+
+  // Memoized summary calculations
+  const summary = useMemo(() => {
+    const confirmedBookings = filteredBookings.filter((b) => b.status === 'confirmed');
+    const totalPaid = confirmedBookings.reduce(
+      (acc, b) => acc + b.payments.reduce((s, p) => s + p.amount, 0),
+      0
+    );
+    const totalDebt = confirmedBookings.reduce(
+      (acc, b) => acc + calculateDebt(b, defaultPrice),
+      0
+    );
+    return { totalPaid, totalDebt };
+  }, [filteredBookings, defaultPrice]);
+
+  // Handlers with useCallback
+  const handleSelectBooking = useCallback((booking: Booking | null) => {
+    setSelectedBookingId(booking?.id || null);
     if (booking) {
       router.replace(`/admin/bookings?selected=${booking.id}`, { scroll: false });
     } else {
       router.replace('/admin/bookings', { scroll: false });
     }
-  };
+  }, [router]);
 
-  // New booking form state
-  const [newBooking, setNewBooking] = useState({
-    fullName: '',
-    documentId: '',
-    address: '',
-    email: '',
-    phone: '',
-    hasWhatsapp: true,
-    startDate: '',
-    endDate: '',
-    weeks: 2,
-    bikeId: '',
-    agreedPrice: defaultPrice.toString(),
-    bondAmount: '140',
-    status: 'confirmed',
-    notes: '',
-  });
+  const handleBookingUpdate = useCallback((updated: Booking) => {
+    setBookings((prev) => prev.map((b) => (b.id === updated.id ? updated : b)));
+  }, []);
 
-  // Payment form state
-  const [showPaymentForm, setShowPaymentForm] = useState(false);
-  const [newPayment, setNewPayment] = useState({
-    amount: defaultPrice.toString(),
-    type: 'weekly',
-    method: 'cash',
-    notes: '',
-  });
+  const handleBookingCreate = useCallback((created: Booking) => {
+    setBookings((prev) => [created, ...prev]);
+    setShowNewForm(false);
+  }, []);
 
-  // Local state for editable inputs (to avoid API calls on every keystroke)
-  const [editPrice, setEditPrice] = useState('');
-  const [editBond, setEditBond] = useState('');
-
-  // Sync local state when selectedBooking changes
-  useEffect(() => {
-    if (selectedBooking) {
-      setEditPrice((selectedBooking.agreedPrice || defaultPrice).toString());
-      setEditBond(selectedBooking.bondAmount.toString());
-    }
-  }, [selectedBooking?.id, selectedBooking?.agreedPrice, selectedBooking?.bondAmount, defaultPrice]);
-
-  const filteredBookings = bookings.filter((booking) => {
-    const matchesFilter = filter === 'all' || booking.status === filter;
-    const matchesSearch =
-      search === '' ||
-      booking.fullName.toLowerCase().includes(search.toLowerCase()) ||
-      booking.email.toLowerCase().includes(search.toLowerCase()) ||
-      (booking.bike?.name || '').toLowerCase().includes(search.toLowerCase());
-    return matchesFilter && matchesSearch;
-  });
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'confirmed':
-        return 'bg-green-500/10 text-green-500 border-green-500/20';
-      case 'cancelled':
-        return 'bg-red-500/10 text-red-500 border-red-500/20';
-      default:
-        return 'bg-amber-500/10 text-amber-500 border-amber-500/20';
-    }
-  };
-
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case 'confirmed': return 'Confirmada';
-      case 'cancelled': return 'Cancelada';
-      default: return 'Pendiente';
-    }
-  };
-
-  const getBondStatusLabel = (status: string) => {
-    switch (status) {
-      case 'paid': return 'Pagado';
-      case 'returned': return 'Devuelto';
-      default: return 'No pagado';
-    }
-  };
-
-  const getBondStatusColor = (status: string) => {
-    switch (status) {
-      case 'paid': return 'text-green-500';
-      case 'returned': return 'text-blue-500';
-      default: return 'text-amber-500';
-    }
-  };
-
-  // Calculate debt for a booking
-  const calculateDebt = (booking: Booking) => {
-    if (booking.status !== 'confirmed') return 0;
-
-    const now = new Date();
-    const startDate = new Date(booking.startDate);
-
-    // If rental hasn't started yet, no debt
-    if (now < startDate) return 0;
-
-    // Calculate weeks elapsed (capped at total weeks)
-    const weeksElapsed = Math.min(
-      Math.ceil(differenceInWeeks(now, startDate)) + 1,
-      booking.weeks
-    );
-
-    const pricePerWeek = booking.agreedPrice || defaultPrice;
-    const totalDue = weeksElapsed * pricePerWeek;
-    const totalPaid = booking.payments.reduce((sum, p) => sum + p.amount, 0);
-
-    return Math.max(0, totalDue - totalPaid);
-  };
-
-  const updateBooking = async (id: string, data: Record<string, unknown>) => {
-    setLoading(true);
-    try {
-      const response = await fetch(`/api/admin/bookings/${id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-
-      if (response.ok) {
-        const updated = await response.json();
-        setBookings(bookings.map((b) => (b.id === id ? updated : b)));
-        if (selectedBooking?.id === id) {
-          setSelectedBooking(updated);
-        }
-      }
-    } catch (error) {
-      console.error('Error updating booking:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const createBooking = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const response = await fetch('/api/admin/bookings', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newBooking),
-      });
-
-      if (response.ok) {
-        const created = await response.json();
-        setBookings([created, ...bookings]);
-        setShowNewForm(false);
-        setNewBooking({
-          fullName: '',
-          documentId: '',
-          address: '',
-          email: '',
-          phone: '',
-          hasWhatsapp: true,
-          startDate: '',
-          endDate: '',
-          weeks: 2,
-          bikeId: '',
-          agreedPrice: defaultPrice.toString(),
-          bondAmount: '140',
-          status: 'confirmed',
-          notes: '',
-        });
-      }
-    } catch (error) {
-      console.error('Error creating booking:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const addPayment = async () => {
-    if (!selectedBooking) return;
-    setLoading(true);
-    try {
-      const response = await fetch('/api/admin/payments', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          bookingId: selectedBooking.id,
-          ...newPayment,
-        }),
-      });
-
-      if (response.ok) {
-        const payment = await response.json();
-        const updatedBooking = {
-          ...selectedBooking,
-          payments: [payment, ...selectedBooking.payments],
-        };
-        setSelectedBooking(updatedBooking);
-        setBookings(bookings.map((b) => (b.id === selectedBooking.id ? updatedBooking : b)));
-        setShowPaymentForm(false);
-        setNewPayment({
-          amount: (selectedBooking.agreedPrice || defaultPrice).toString(),
-          type: 'weekly',
-          method: 'cash',
-          notes: '',
-        });
-      }
-    } catch (error) {
-      console.error('Error adding payment:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const deletePayment = async (paymentId: string) => {
-    if (!selectedBooking || !confirm('¿Eliminar este pago?')) return;
-    try {
-      const response = await fetch(`/api/admin/payments/${paymentId}`, {
-        method: 'DELETE',
-      });
-
-      if (response.ok) {
-        const updatedBooking = {
-          ...selectedBooking,
-          payments: selectedBooking.payments.filter((p) => p.id !== paymentId),
-        };
-        setSelectedBooking(updatedBooking);
-        setBookings(bookings.map((b) => (b.id === selectedBooking.id ? updatedBooking : b)));
-      }
-    } catch (error) {
-      console.error('Error deleting payment:', error);
-    }
-  };
-
-  const availableBikes = bikes.filter(
-    (b) => b.status === 'available' || b.id === selectedBooking?.bikeId
+  const availableBikes = useMemo(() =>
+    bikes.filter((b) => b.status === 'available' || b.id === selectedBooking?.bikeId),
+    [bikes, selectedBooking?.bikeId]
   );
 
   return (
@@ -337,7 +236,7 @@ export default function BookingsTable({ initialBookings, bikes, defaultPrice }: 
           </div>
           <button
             onClick={() => setShowNewForm(true)}
-            className="px-4 py-2.5 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-lg font-medium hover:from-orange-600 hover:to-amber-600 transition-colors flex items-center gap-2 flex-shrink-0"
+            className="px-4 py-2.5 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-lg font-medium hover:from-orange-600 hover:to-amber-600 transition-colors flex items-center gap-2 flex-shrink-0 min-h-[44px] min-w-[44px]"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -345,16 +244,17 @@ export default function BookingsTable({ initialBookings, bikes, defaultPrice }: 
             <span className="hidden sm:inline">Nueva Reserva</span>
           </button>
         </div>
-        {/* Status filters - horizontal scroll on mobile */}
-        <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-hide">
-          {statusOptions.map((option) => (
+
+        {/* Status filters - horizontal scroll on mobile with larger touch targets */}
+        <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide snap-x">
+          {STATUS_OPTIONS.map((option) => (
             <button
               key={option.value}
               onClick={() => setFilter(option.value)}
-              className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors whitespace-nowrap flex-shrink-0 ${
+              className={`px-4 py-2.5 rounded-lg font-medium text-sm transition-colors whitespace-nowrap flex-shrink-0 snap-start min-h-[44px] ${
                 filter === option.value
                   ? 'bg-orange-500 text-white'
-                  : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                  : 'bg-slate-800 text-slate-400 hover:bg-slate-700 active:bg-slate-600'
               }`}
             >
               {option.label}
@@ -366,530 +266,129 @@ export default function BookingsTable({ initialBookings, bikes, defaultPrice }: 
       {/* Bookings List */}
       <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
         <div className="divide-y divide-slate-700">
-          {filteredBookings.length === 0 ? (
+          {paginatedBookings.length === 0 ? (
             <div className="p-12 text-center">
               <p className="text-slate-400">No se encontraron reservas</p>
             </div>
           ) : (
-            filteredBookings.map((booking) => {
-              const debt = calculateDebt(booking);
+            paginatedBookings.map((booking) => {
+              const debt = calculateDebt(booking, defaultPrice);
               const pricePerWeek = booking.agreedPrice || defaultPrice;
 
               return (
-                <div
+                <button
                   key={booking.id}
                   onClick={() => handleSelectBooking(booking)}
-                  className="p-4 hover:bg-slate-700/30 cursor-pointer flex flex-col sm:flex-row sm:items-center gap-4"
+                  className="w-full text-left p-4 hover:bg-slate-700/30 active:bg-slate-700/50 cursor-pointer flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 transition-colors min-h-[72px]"
                 >
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="text-white font-semibold">{booking.fullName}</h3>
-                      <span className={`px-2 py-0.5 text-xs font-medium rounded-full border ${getStatusColor(booking.status)}`}>
-                        {getStatusLabel(booking.status)}
-                      </span>
+                      <h3 className="text-white font-semibold truncate">{booking.fullName}</h3>
+                      <StatusBadge status={booking.status} />
                       {booking.contractStatus === 'signed' && (
                         <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-purple-500/10 text-purple-400">
-                          Contrato firmado
+                          Contrato
                         </span>
                       )}
                     </div>
-                    <div className="flex items-center gap-4 mt-1 text-sm text-slate-400">
-                      <span>{booking.bike?.name || 'Sin bici asignada'}</span>
-                      <span>•</span>
-                      <span>
+                    <div className="flex items-center gap-2 sm:gap-4 mt-1 text-sm text-slate-400 flex-wrap">
+                      <span className="truncate max-w-[120px] sm:max-w-none">{booking.bike?.name || 'Sin bici'}</span>
+                      <span className="hidden sm:inline">•</span>
+                      <span className="text-xs sm:text-sm">
                         {format(new Date(booking.startDate), 'dd MMM', { locale: es })} - {format(new Date(booking.endDate), 'dd MMM', { locale: es })}
                       </span>
-                      <span>•</span>
-                      <span>{booking.weeks} sem × ${pricePerWeek}</span>
+                      <span className="hidden sm:inline">•</span>
+                      <span className="hidden sm:inline">{booking.weeks} sem × ${pricePerWeek}</span>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4 text-sm">
-                    <div className="text-right">
-                      <p className={`font-medium ${getBondStatusColor(booking.bondStatus)}`}>
-                        Bond: {getBondStatusLabel(booking.bondStatus)}
+                  <div className="flex items-center justify-between sm:justify-end gap-4 text-sm">
+                    <div className="text-left sm:text-right">
+                      <p className="text-xs sm:text-sm">
+                        Bond: <BondStatusBadge status={booking.bondStatus} />
                       </p>
                       {debt > 0 && booking.status === 'confirmed' && (
-                        <p className="text-red-400">Debe: ${debt}</p>
+                        <p className="text-red-400 text-xs sm:text-sm">Debe: ${debt}</p>
                       )}
                     </div>
-                    <svg className="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 text-slate-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                   </div>
-                </div>
+                </button>
               );
             })
           )}
         </div>
       </div>
 
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-2">
+          <button
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            className="p-2.5 bg-slate-800 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] min-w-[44px] flex items-center justify-center"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <span className="text-slate-400 text-sm px-3">
+            {currentPage} / {totalPages}
+          </span>
+          <button
+            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+            className="p-2.5 bg-slate-800 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] min-w-[44px] flex items-center justify-center"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+      )}
+
       {/* Summary */}
       <div className="flex flex-wrap justify-between items-center gap-4 text-sm text-slate-400">
-        <p>Mostrando {filteredBookings.length} de {bookings.length} reservas</p>
-        <div className="flex gap-6">
+        <p>Mostrando {paginatedBookings.length} de {filteredBookings.length} reservas</p>
+        <div className="flex gap-4 sm:gap-6">
           <p>
             Total pagado:{' '}
-            <span className="text-green-500 font-medium">
-              ${filteredBookings.filter((b) => b.status === 'confirmed').reduce((acc, b) => acc + b.payments.reduce((s, p) => s + p.amount, 0), 0)} AUD
-            </span>
+            <span className="text-green-500 font-medium">${summary.totalPaid} AUD</span>
           </p>
           <p>
             Deuda total:{' '}
-            <span className="text-red-400 font-medium">
-              ${filteredBookings.filter((b) => b.status === 'confirmed').reduce((acc, b) => acc + calculateDebt(b), 0)} AUD
-            </span>
+            <span className="text-red-400 font-medium">${summary.totalDebt} AUD</span>
           </p>
         </div>
       </div>
 
-      {/* Detail Modal */}
+      {/* Lazy loaded modals */}
       {selectedBooking && (
-        <div className="fixed inset-0 bg-black/50 flex items-start justify-center z-50 p-2 sm:p-4 overflow-y-auto">
-          <div className="bg-slate-800 rounded-xl border border-slate-700 w-full max-w-2xl my-2 sm:my-8">
-            <div className="p-4 sm:p-6 border-b border-slate-700 flex justify-between items-start gap-3">
-              <div className="min-w-0">
-                <h2 className="text-lg sm:text-xl font-semibold text-white truncate">{selectedBooking.fullName}</h2>
-                <p className="text-slate-400 text-xs sm:text-sm truncate">{selectedBooking.email}</p>
-                <p className="text-slate-400 text-xs sm:text-sm">{selectedBooking.phone || 'Sin teléfono'}</p>
-              </div>
-              <button onClick={() => handleSelectBooking(null)} className="text-slate-400 hover:text-white p-1 -mr-1 flex-shrink-0">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-
-            <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
-              {/* Status & Actions */}
-              <div className="flex flex-wrap gap-2">
-                {['pending', 'confirmed', 'cancelled'].map((status) => (
-                  <button
-                    key={status}
-                    onClick={() => updateBooking(selectedBooking.id, { status })}
-                    disabled={loading}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      selectedBooking.status === status
-                        ? status === 'confirmed' ? 'bg-green-500 text-white' : status === 'cancelled' ? 'bg-red-500 text-white' : 'bg-amber-500 text-white'
-                        : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
-                    }`}
-                  >
-                    {getStatusLabel(status)}
-                  </button>
-                ))}
-              </div>
-
-              {/* Bike Assignment */}
-              <div>
-                <label className="block text-white font-medium mb-2">Bici Asignada</label>
-                <select
-                  value={selectedBooking.bikeId || ''}
-                  onChange={(e) => updateBooking(selectedBooking.id, { bikeId: e.target.value })}
-                  className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
-                >
-                  <option value="">Sin asignar</option>
-                  {availableBikes.map((bike) => (
-                    <option key={bike.id} value={bike.id}>{bike.name}</option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Price & Contract */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                <div>
-                  <label className="block text-white font-medium mb-2 text-sm sm:text-base">Precio Semanal ($AUD)</label>
-                  <input
-                    type="number"
-                    value={editPrice}
-                    onChange={(e) => setEditPrice(e.target.value)}
-                    onBlur={() => {
-                      const newPrice = parseFloat(editPrice);
-                      if (!isNaN(newPrice) && newPrice !== selectedBooking.agreedPrice) {
-                        updateBooking(selectedBooking.id, { agreedPrice: newPrice });
-                      }
-                    }}
-                    className="w-full px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-white font-medium mb-2 text-sm sm:text-base">Contrato</label>
-                  <button
-                    onClick={() => updateBooking(selectedBooking.id, {
-                      contractStatus: selectedBooking.contractStatus === 'signed' ? 'unsigned' : 'signed'
-                    })}
-                    className={`w-full px-4 py-2.5 rounded-lg font-medium transition-colors ${
-                      selectedBooking.contractStatus === 'signed'
-                        ? 'bg-purple-500 text-white'
-                        : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
-                    }`}
-                  >
-                    {selectedBooking.contractStatus === 'signed' ? 'Firmado ✓' : 'No firmado'}
-                  </button>
-                </div>
-              </div>
-
-              {/* Bond */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                <div>
-                  <label className="block text-white font-medium mb-2 text-sm sm:text-base">Bond ($AUD)</label>
-                  <input
-                    type="number"
-                    value={editBond}
-                    onChange={(e) => setEditBond(e.target.value)}
-                    onBlur={() => {
-                      const newBond = parseFloat(editBond);
-                      if (!isNaN(newBond) && newBond !== selectedBooking.bondAmount) {
-                        updateBooking(selectedBooking.id, { bondAmount: newBond });
-                      }
-                    }}
-                    className="w-full px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-white font-medium mb-2 text-sm sm:text-base">Estado del Bond</label>
-                  <select
-                    value={selectedBooking.bondStatus}
-                    onChange={(e) => updateBooking(selectedBooking.id, { bondStatus: e.target.value })}
-                    className="w-full px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
-                  >
-                    <option value="not_paid">No pagado</option>
-                    <option value="paid">Pagado</option>
-                    <option value="returned">Devuelto</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Dates - Editable */}
-              <div className="bg-slate-700/50 rounded-lg p-3 sm:p-4 space-y-3 sm:space-y-4">
-                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
-                  <h3 className="text-white font-medium text-sm sm:text-base">Fechas del Alquiler</h3>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => {
-                        const newEndDate = addWeeks(new Date(selectedBooking.endDate), 1);
-                        updateBooking(selectedBooking.id, {
-                          endDate: newEndDate.toISOString(),
-                          weeks: selectedBooking.weeks + 1,
-                        });
-                      }}
-                      disabled={loading}
-                      className="flex-1 sm:flex-none px-3 py-1.5 bg-orange-500/20 text-orange-400 rounded-lg text-sm hover:bg-orange-500/30 transition-colors"
-                    >
-                      +1 Sem
-                    </button>
-                    <button
-                      onClick={() => {
-                        const newEndDate = addWeeks(new Date(selectedBooking.endDate), 2);
-                        updateBooking(selectedBooking.id, {
-                          endDate: newEndDate.toISOString(),
-                          weeks: selectedBooking.weeks + 2,
-                        });
-                      }}
-                      disabled={loading}
-                      className="flex-1 sm:flex-none px-3 py-1.5 bg-orange-500/20 text-orange-400 rounded-lg text-sm hover:bg-orange-500/30 transition-colors"
-                    >
-                      +2 Sem
-                    </button>
-                  </div>
-                </div>
-                <div className="grid grid-cols-3 gap-2 sm:gap-4">
-                  <div>
-                    <label className="block text-slate-400 text-xs sm:text-sm mb-1">Inicio</label>
-                    <input
-                      type="date"
-                      value={format(new Date(selectedBooking.startDate), 'yyyy-MM-dd')}
-                      onChange={(e) => updateBooking(selectedBooking.id, { startDate: new Date(e.target.value).toISOString() })}
-                      className="w-full px-2 sm:px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-slate-400 text-xs sm:text-sm mb-1">Fin</label>
-                    <input
-                      type="date"
-                      value={format(new Date(selectedBooking.endDate), 'yyyy-MM-dd')}
-                      onChange={(e) => updateBooking(selectedBooking.id, { endDate: new Date(e.target.value).toISOString() })}
-                      className="w-full px-2 sm:px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-slate-400 text-xs sm:text-sm mb-1">Sem</label>
-                    <input
-                      type="number"
-                      min="1"
-                      value={selectedBooking.weeks}
-                      onChange={(e) => {
-                        const newWeeks = parseInt(e.target.value) || 1;
-                        const newEndDate = addWeeks(new Date(selectedBooking.startDate), newWeeks);
-                        updateBooking(selectedBooking.id, {
-                          weeks: newWeeks,
-                          endDate: newEndDate.toISOString(),
-                        });
-                      }}
-                      className="w-full px-2 sm:px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    />
-                  </div>
-                </div>
-                <div className="text-xs sm:text-sm text-slate-400">
-                  Total: <span className="text-white font-medium">{selectedBooking.weeks} sem × ${editPrice || defaultPrice} = ${selectedBooking.weeks * (parseFloat(editPrice) || defaultPrice)} AUD</span>
-                </div>
-              </div>
-
-              {/* Client Info */}
-              <div className="grid grid-cols-2 gap-3 sm:gap-4 text-xs sm:text-sm">
-                <div>
-                  <p className="text-slate-400">Dirección</p>
-                  <p className="text-white truncate">{selectedBooking.address || '-'}</p>
-                </div>
-                <div>
-                  <p className="text-slate-400">Documento</p>
-                  <p className="text-white">{selectedBooking.documentId || '-'}</p>
-                </div>
-                <div>
-                  <p className="text-slate-400">WhatsApp</p>
-                  <p className="text-white">{selectedBooking.hasWhatsapp ? 'Sí' : 'No'}</p>
-                </div>
-                <div>
-                  <p className="text-slate-400">Creado por</p>
-                  <p className="text-white">{selectedBooking.createdBy === 'admin' ? 'Admin' : 'Formulario'}</p>
-                </div>
-              </div>
-
-              {/* Debt Summary */}
-              {selectedBooking.status === 'confirmed' && (
-                <div className={`p-4 rounded-lg ${calculateDebt(selectedBooking) > 0 ? 'bg-red-500/10 border border-red-500/20' : 'bg-green-500/10 border border-green-500/20'}`}>
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <p className={`font-medium ${calculateDebt(selectedBooking) > 0 ? 'text-red-400' : 'text-green-400'}`}>
-                        {calculateDebt(selectedBooking) > 0 ? 'Deuda pendiente' : 'Al día'}
-                      </p>
-                      <p className="text-sm text-slate-400">
-                        Pagado: ${selectedBooking.payments.reduce((s, p) => s + p.amount, 0)} de ${selectedBooking.weeks * (selectedBooking.agreedPrice || defaultPrice)}
-                      </p>
-                    </div>
-                    <p className={`text-2xl font-bold ${calculateDebt(selectedBooking) > 0 ? 'text-red-400' : 'text-green-400'}`}>
-                      ${calculateDebt(selectedBooking)}
-                    </p>
-                  </div>
-                </div>
-              )}
-
-              {/* Payments */}
-              <div>
-                <div className="flex justify-between items-center mb-3">
-                  <h3 className="text-white font-medium">Pagos</h3>
-                  <button
-                    onClick={() => setShowPaymentForm(true)}
-                    className="px-3 py-1 bg-green-500/10 text-green-500 rounded-lg text-sm hover:bg-green-500/20 transition-colors"
-                  >
-                    + Agregar Pago
-                  </button>
-                </div>
-
-                {showPaymentForm && (
-                  <div className="bg-slate-700 rounded-lg p-3 sm:p-4 mb-4 space-y-3">
-                    <div className="grid grid-cols-2 gap-2 sm:gap-3">
-                      <input
-                        type="number"
-                        placeholder="Monto"
-                        value={newPayment.amount}
-                        onChange={(e) => setNewPayment({ ...newPayment, amount: e.target.value })}
-                        className="px-3 py-2.5 bg-slate-600 border border-slate-500 rounded-lg text-white text-sm"
-                      />
-                      <select
-                        value={newPayment.type}
-                        onChange={(e) => setNewPayment({ ...newPayment, type: e.target.value })}
-                        className="px-3 py-2.5 bg-slate-600 border border-slate-500 rounded-lg text-white text-sm"
-                      >
-                        <option value="weekly">Semanal</option>
-                        <option value="advance">Adelanto</option>
-                        <option value="other">Otro</option>
-                      </select>
-                    </div>
-                    <select
-                      value={newPayment.method}
-                      onChange={(e) => setNewPayment({ ...newPayment, method: e.target.value })}
-                      className="w-full px-3 py-2.5 bg-slate-600 border border-slate-500 rounded-lg text-white text-sm"
-                    >
-                      <option value="cash">Efectivo</option>
-                      <option value="transfer">Transferencia</option>
-                    </select>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => setShowPaymentForm(false)}
-                        className="flex-1 px-3 py-2.5 bg-slate-600 text-white rounded-lg text-sm active:scale-[0.98]"
-                      >
-                        Cancelar
-                      </button>
-                      <button
-                        onClick={addPayment}
-                        disabled={loading}
-                        className="flex-1 px-3 py-2.5 bg-green-500 text-white rounded-lg text-sm font-medium active:scale-[0.98]"
-                      >
-                        Guardar
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                <div className="space-y-2">
-                  {selectedBooking.payments.length === 0 ? (
-                    <p className="text-slate-400 text-sm py-4 text-center">No hay pagos registrados</p>
-                  ) : (
-                    selectedBooking.payments.map((payment) => (
-                      <div key={payment.id} className="flex items-center justify-between bg-slate-700 rounded-lg px-4 py-3">
-                        <div>
-                          <p className="text-white font-medium">${payment.amount}</p>
-                          <p className="text-slate-400 text-xs">
-                            {format(new Date(payment.date), 'dd MMM yyyy', { locale: es })} • {payment.type === 'weekly' ? 'Semanal' : payment.type === 'advance' ? 'Adelanto' : 'Otro'} • {payment.method === 'cash' ? 'Efectivo' : 'Transferencia'}
-                          </p>
-                        </div>
-                        <button
-                          onClick={() => deletePayment(payment.id)}
-                          className="text-red-400 hover:text-red-300 p-1"
-                        >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                          </svg>
-                        </button>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <Suspense fallback={<ModalLoader />}>
+          <BookingDetailModal
+            booking={selectedBooking}
+            bikes={availableBikes}
+            defaultPrice={defaultPrice}
+            onClose={() => handleSelectBooking(null)}
+            onUpdate={handleBookingUpdate}
+          />
+        </Suspense>
       )}
 
-      {/* New Booking Modal */}
       {showNewForm && (
-        <div className="fixed inset-0 bg-black/50 flex items-start justify-center z-50 p-2 sm:p-4 overflow-y-auto">
-          <div className="bg-slate-800 rounded-xl border border-slate-700 w-full max-w-lg my-2 sm:my-8">
-            <div className="p-4 sm:p-6 border-b border-slate-700 flex items-center justify-between">
-              <h2 className="text-lg sm:text-xl font-semibold text-white">Nueva Reserva</h2>
-              <button onClick={() => setShowNewForm(false)} className="text-slate-400 hover:text-white p-1 -mr-1">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-            <form onSubmit={createBooking} className="p-4 sm:p-6 space-y-4">
-              <div>
-                <label className="block text-white font-medium mb-2 text-sm sm:text-base">Nombre Completo *</label>
-                <input
-                  type="text"
-                  value={newBooking.fullName}
-                  onChange={(e) => setNewBooking({ ...newBooking, fullName: e.target.value })}
-                  className="w-full px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white"
-                  required
-                />
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                <div>
-                  <label className="block text-white font-medium mb-2 text-sm sm:text-base">Email *</label>
-                  <input
-                    type="email"
-                    value={newBooking.email}
-                    onChange={(e) => setNewBooking({ ...newBooking, email: e.target.value })}
-                    className="w-full px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-white font-medium mb-2 text-sm sm:text-base">Teléfono</label>
-                  <input
-                    type="tel"
-                    value={newBooking.phone}
-                    onChange={(e) => setNewBooking({ ...newBooking, phone: e.target.value })}
-                    className="w-full px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white"
-                  />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-3 sm:gap-4">
-                <div>
-                  <label className="block text-white font-medium mb-2 text-sm sm:text-base">Fecha Inicio *</label>
-                  <input
-                    type="date"
-                    value={newBooking.startDate}
-                    onChange={(e) => setNewBooking({ ...newBooking, startDate: e.target.value })}
-                    className="w-full px-3 sm:px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white text-sm"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-white font-medium mb-2 text-sm sm:text-base">Fecha Fin *</label>
-                  <input
-                    type="date"
-                    value={newBooking.endDate}
-                    onChange={(e) => setNewBooking({ ...newBooking, endDate: e.target.value })}
-                    className="w-full px-3 sm:px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white text-sm"
-                    required
-                  />
-                </div>
-              </div>
-              <div className="grid grid-cols-3 gap-2 sm:gap-4">
-                <div>
-                  <label className="block text-white font-medium mb-2 text-sm sm:text-base">Sem *</label>
-                  <input
-                    type="number"
-                    min="1"
-                    value={newBooking.weeks}
-                    onChange={(e) => setNewBooking({ ...newBooking, weeks: parseInt(e.target.value) })}
-                    className="w-full px-3 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white text-sm"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-white font-medium mb-2 text-sm sm:text-base">$/Sem</label>
-                  <input
-                    type="number"
-                    value={newBooking.agreedPrice}
-                    onChange={(e) => setNewBooking({ ...newBooking, agreedPrice: e.target.value })}
-                    className="w-full px-3 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="block text-white font-medium mb-2 text-sm sm:text-base">Bond</label>
-                  <input
-                    type="number"
-                    value={newBooking.bondAmount}
-                    onChange={(e) => setNewBooking({ ...newBooking, bondAmount: e.target.value })}
-                    className="w-full px-3 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white text-sm"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-white font-medium mb-2 text-sm sm:text-base">Bici</label>
-                <select
-                  value={newBooking.bikeId}
-                  onChange={(e) => setNewBooking({ ...newBooking, bikeId: e.target.value })}
-                  className="w-full px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white"
-                >
-                  <option value="">Sin asignar</option>
-                  {bikes.filter((b) => b.status === 'available').map((bike) => (
-                    <option key={bike.id} value={bike.id}>{bike.name}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="flex gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setShowNewForm(false)}
-                  className="flex-1 px-4 py-2.5 bg-slate-700 text-white rounded-lg active:scale-[0.98]"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="flex-1 px-4 py-2.5 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-lg font-medium active:scale-[0.98]"
-                >
-                  {loading ? 'Creando...' : 'Crear'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
+        <Suspense fallback={<ModalLoader />}>
+          <NewBookingModal
+            bikes={bikes.filter((b) => b.status === 'available')}
+            defaultPrice={defaultPrice}
+            onClose={() => setShowNewForm(false)}
+            onCreate={handleBookingCreate}
+          />
+        </Suspense>
       )}
     </div>
   );
 }
+
+// Export types for modal components
+export type { Booking, Bike, Payment };
